@@ -50,7 +50,7 @@ export default function Marco({
             ["/mujer", "MUJER"],
             ["/hombre", "HOMBRE"],
             ["/todo", "VER TODO"],
-            ["/outfits", "OUTFITS"],
+            ["/looks", "LOOKS"],
             ["/c/zapatillas", "ZAPATILLAS"],
             ["/c/accesorios", "ACCESORIOS"],
           ].map(([href, txt]) => (
@@ -166,7 +166,7 @@ function Menu({
                 </button>
               </li>
               <li><Link href="/todo" onClick={cerrar} className="menu-item">Ver todo</Link></li>
-              <li><Link href="/outfits" onClick={cerrar} className="menu-item">Outfits</Link></li>
+              <li><Link href="/looks" onClick={cerrar} className="menu-item">Looks</Link></li>
               {categorias.map((c) => (
                 <li key={c}>
                   <Link href={`/c/${slugCategoria(c)}`} onClick={cerrar} className="menu-item">

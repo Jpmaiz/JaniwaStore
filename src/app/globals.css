@@ -941,34 +941,37 @@ a.btn-primary { color: var(--bg); }
 .bolsa-aviso button { min-height: 32px; padding: 0 10px; border: 1px solid var(--bg); font-size: 10px; letter-spacing: .1em; font-weight: 600; }
 @media (prefers-reduced-motion: reduce) { .bolsa, .bolsa-scrim, .bolsa-aviso { transition: none; } .bolsa-latido { animation: none; } }
 
-/* ═════════ Feed de outfits ═════════ */
-.feed { max-width: 620px; margin: 0 auto; display: flex; flex-direction: column; gap: 56px; }
-.post { display: flex; flex-direction: column; gap: 14px; }
-.post-cabeza { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
-.post-cabeza h2 { font-size: 24px; color: var(--cream); }
-.post-cabeza .small { color: var(--cream); opacity: .75; }
-.collage { display: grid; gap: 6px; grid-template-columns: 2fr 1fr; aspect-ratio: 4 / 5; }
-.collage-0 { grid-template-columns: 1fr; }
-.collage-main { grid-row: 1 / -1; }
-.collage-1 { grid-template-rows: 1fr; }
-.collage-2 { grid-template-rows: 1fr 1fr; }
-.collage-3 { grid-template-rows: 1fr 1fr 1fr; }
-.collage a { position: relative; overflow: hidden; background-color: var(--panel); display: block; }
-.collage img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform .6s cubic-bezier(.2,.7,.2,1); }
-.collage a:hover img { transform: scale(1.04); }
-.post-titulo { margin-top: 4px; color: var(--cream); opacity: .75; }
-.post-prendas { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
-.post-prendas li a { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--line); color: var(--cream); text-decoration: none; }
-.post-prendas li a:hover .post-nombre { text-decoration: underline; text-underline-offset: 3px; }
-.post-prendas svg { flex: none; color: var(--muted); }
-.post-mini { flex: none; width: 44px; aspect-ratio: 3 / 4; overflow: hidden; background-color: var(--panel); }
-.post-mini img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.post-dato { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
-.post-nombre { font-family: var(--serif); font-weight: 700; font-size: 15px; line-height: 1.2; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.post-precio { font-size: 12px; white-space: nowrap; }
-.post-pie { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; }
-.post-total { font-size: 12px; color: var(--muted); }
-.post-total b { font-family: var(--serif); font-size: 20px; color: var(--cream); margin-left: 6px; }
-.post-pie .btn { min-height: 48px; }
-@media (max-width: 640px) { .post-pie .btn { width: 100%; } .feed { gap: 44px; } }
+/* ═════════ Looks: grilla tipo Pinterest a lo ancho ═════════ */
+.pines { columns: 236px; column-gap: 16px; }
+.pin { break-inside: avoid; margin: 0 0 22px; display: flex; flex-direction: column; gap: 8px; }
+.pin-foto { position: relative; border-radius: 16px; overflow: hidden; background: var(--panel); isolation: isolate; }
+.pin-main { position: relative; display: block; overflow: hidden; background-color: var(--panel); }
+.pin-main img, .pin-minis img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
+.pin-minis { display: grid; gap: 3px; padding-top: 3px; background: var(--bg); }
+.pin-minis a { position: relative; aspect-ratio: 1 / 1; overflow: hidden; background-color: var(--panel); display: block; }
+/* al apuntar: se oscurece y aparecen "Agregar" y el total, como el "Guardar" de Pinterest */
+.pin-foto::after { content: ""; position: absolute; inset: 0; background: rgba(10, 6, 4, .38); opacity: 0; transition: opacity .2s ease; pointer-events: none; z-index: 1; }
+.pin-agregar {
+  position: absolute; top: 10px; right: 10px; z-index: 2; min-height: 36px; padding: 0 14px; border-radius: 999px;
+  background: var(--cream); color: var(--bg); font-size: 11px; font-weight: 600; letter-spacing: .08em;
+  opacity: 0; transform: translateY(-4px); transition: opacity .2s ease, transform .2s ease, background .2s ease;
+}
+.pin-agregar:hover { background: #fff; }
+.pin-agregar.is-listo { background: var(--bg); color: var(--cream); border: 1px solid var(--cream); }
+.pin-total { position: absolute; left: 10px; bottom: 10px; z-index: 2; padding: 4px 10px; border-radius: 999px; background: rgba(17, 10, 6, .82); font-size: 11px; opacity: 0; transition: opacity .2s ease; pointer-events: none; }
+.pin-foto:hover::after, .pin-foto:focus-within::after { opacity: 1; }
+.pin-foto:hover .pin-agregar, .pin-foto:focus-within .pin-agregar, .pin-foto:hover .pin-total, .pin-foto:focus-within .pin-total { opacity: 1; transform: none; }
+/* en el celular (sin cursor) el botón queda siempre a la vista */
+@media (hover: none) { .pin-agregar, .pin-total { opacity: 1; transform: none; } .pin-agregar { min-height: 32px; padding: 0 12px; font-size: 10px; } }
+/* texto pequeño debajo, con el link de cada prenda */
+.pin-texto { padding: 0 4px; display: flex; flex-direction: column; gap: 4px; }
+.pin-titulo { font-family: var(--serif); font-weight: 700; font-size: 14px; color: var(--cream); }
+.pin-titulo span { font-family: var(--mono); font-weight: 400; font-size: 10px; letter-spacing: .08em; text-transform: uppercase; opacity: .7; }
+.pin-texto ul { list-style: none; margin: 0; padding: 0; }
+.pin-texto li a { display: flex; justify-content: space-between; gap: 8px; padding: 2px 0; font-size: 10px; letter-spacing: .03em; color: var(--muted); text-decoration: none; }
+.pin-texto li a span:first-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pin-texto li a span:last-child { flex: none; }
+.pin-texto li a:hover { color: var(--cream); }
+@media (max-width: 640px) { .pines { columns: 2; column-gap: 8px; } .pin { margin-bottom: 16px; } .pin-foto { border-radius: 12px; } }
+@media (prefers-reduced-motion: reduce) { .pin-agregar, .pin-foto::after, .pin-total { transition: none; } }
 button.chip { cursor: inherit; }
