@@ -111,6 +111,7 @@ export default function Escaparate({
         <div className="empty">
           <p className="label">LA TIENDA NO ESTÁ DISPONIBLE EN ESTE MOMENTO</p>
           <p className="muted">Vuelve a intentarlo en unos minutos.</p>
+          {process.env.NODE_ENV === "development" && <p className="small error">Solo en tu PC: {error}</p>}
         </div>
       ) : lista.length === 0 ? (
         <div className="empty">

@@ -7,6 +7,7 @@ import type { ProductoPublico } from "@/lib/types";
 import { CATEGORIAS_MENU, nombreCategoria, seccionesDe, slugCategoria } from "@/lib/catalogo";
 import { enlaceWhatsAppGeneral } from "@/lib/vitrina";
 import { IconoCerrar, IconoChat, IconoDerecha, IconoIzquierda, IconoMenu } from "./Iconos";
+import LogoEscurridizo from "./LogoEscurridizo";
 
 type Nivel = "raiz" | "mujer" | "hombre";
 const NOMBRE = { mujer: "Mujer", hombre: "Hombre" } as const;
@@ -39,11 +40,7 @@ export default function Marco({
           <IconoMenu />
         </button>
 
-        <Link href="/" className="bar-logo" aria-label="Janiwa, inicio">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/logo.png" alt="" />
-          <span>Janiwa</span>
-        </Link>
+        <LogoEscurridizo />
 
         <nav className="bar-nav" aria-label="Departamentos">
           {[
