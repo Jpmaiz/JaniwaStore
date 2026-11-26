@@ -1,10 +1,15 @@
-import { cargarDatos } from "@/lib/datos";
-import { obtenerDolar } from "@/lib/dolar";
-import Wishlist from "@/components/Wishlist";
+import Marca from "@/components/Marca";
 
-export const dynamic = "force-dynamic";
-
-export default async function Home() {
-  const [{ products, settings, error }, dolar] = await Promise.all([cargarDatos(), obtenerDolar()]);
-  return <Wishlist products={products} settings={settings} dolar={dolar} error={error} />;
+/** Portada provisoria: aquí irá la tienda pública (Fase 3) */
+export default function Inicio() {
+  return (
+    <main className="auth-shell">
+      <div className="portada">
+        <Marca subtitulo="PRODUCTOS DE EE. UU. EN BOLIVIA" grande />
+        <div className="cf-rule" aria-hidden="true" style={{ width: "100%" }} />
+        <p className="portada-texto">La tienda abre muy pronto.</p>
+        <p className="small muted">COCHABAMBA · BOLIVIA</p>
+      </div>
+    </main>
+  );
 }

@@ -38,26 +38,33 @@ calculadora de costo **en tus manos en USA** y conversión a **Bs al dólar para
    - `supabase/003_tiendas.sql` (apartado de tiendas)
    - `supabase/005_monedas.sql` (precios en $, Bs o €)
 4. **Variables de entorno**: copia `.env.example` como `.env.local` y llena:
-   - `SUPABASE_URL` → Project Settings › API › Project URL
-   - `SUPABASE_SERVICE_ROLE_KEY` → Project Settings › API › `service_role` (secreta)
-5. **Corre la app**:
-   ```
-   npm run dev
-   ```
-   Abre http://localhost:3000
+   - `SUPABASE_URL` → Project Settings › Data API (solo hasta `.supabase.co`)
+   - `SUPABASE_SERVICE_ROLE_KEY` → Project Settings › API Keys › clave **secret** (o `service_role`)
+   - `SUPABASE_PUBLISHABLE_KEY` → Project Settings › API Keys › clave **publishable** (o `anon`)
+   - `ADMIN_EMAILS` → tu correo (el único con acceso al panel)
+5. **Tu usuario admin** en Supabase:
+   - Authentication › Users › *Add user* › *Create new user* (tu correo + contraseña, marca *Auto Confirm*)
+   - Authentication › Sign In / Providers › desactiva *Allow new users to sign up*
+6. **Corre la app**: `npm run dev`
+   - Tienda (por ahora portada): http://localhost:3000
+   - Panel: http://localhost:3000/admin (te pide iniciar sesión)
 
 ## Estructura
 ```
 src/
   app/
-    page.tsx          wishlist
-    tiendas/page.tsx  apartado de tiendas
+    page.tsx          portada pública (la tienda irá aquí)
+    login/            inicio de sesión del admin
+    admin/page.tsx    wishlist (protegido)
+    admin/tiendas/    apartado de tiendas (protegido)
+    auth-actions.ts   iniciar y cerrar sesión
     icon.png          ícono de la pestaña
     actions.ts        agregar / cambiar estado / eliminar / guardar ajustes
     layout.tsx        fuentes Zodiak + IBM Plex Mono
     globals.css       estilo Janiwa (chocolate, cursores, grilla)
   components/         Sidebar, Tile, ProductSheet, formularios, Dialog
   lib/
+    auth.ts           sesión del admin y requireAdmin()
     datos.ts          carga de productos, ofertas, ajustes y tiendas
     calc.ts           fórmula de costo y mejor oferta
     scraper.ts        lector de links (JSON-LD y Open Graph)
@@ -91,6 +98,8 @@ total Bs  = total USD × dólar paralelo
 ```
 
 ## Seguridad
+- El panel vive en `/admin`: el proxy (`src/proxy.ts`) manda al login si no hay sesión,
+  y cada página y cada acción del servidor vuelve a comprobar que el correo esté en `ADMIN_EMAILS`.
 La app usa la *service role key* solo en el servidor y las tablas tienen RLS activo sin
 políticas, así la clave pública no puede leer nada. **No subas `.env.local` a GitHub.**
 Si publicas la app en internet (Vercel), agrega antes un login: hoy cualquiera con el link

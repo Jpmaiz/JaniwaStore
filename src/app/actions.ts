@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { db } from "@/lib/supabase";
+import { requireAdmin } from "@/lib/auth";
 import { leerPagina, type ResultadoLectura } from "@/lib/scraper";
 import { CATEGORIES, MONEDAS, STATUSES, type Moneda, type Status } from "@/lib/types";
 
@@ -63,19 +64,21 @@ function limpiarOferta(o: OfertaInput) {
 }
 
 function refrescar() {
-  revalidatePath("/");
-  revalidatePath("/tiendas");
+  revalidatePath("/admin");
+  revalidatePath("/admin/tiendas");
 }
 
 /* ── Lectura de links ── */
 
 export async function leerLink(url: string): Promise<ResultadoLectura> {
+  await requireAdmin();
   return leerPagina(String(url ?? ""));
 }
 
 /* ── Tarjetas ── */
 
 export async function crearProducto(input: ProductoInput): Promise<ActionResult> {
+  await requireAdmin();
   const name = txt(input.name, 160);
   if (!name) return { ok: false, error: "El nombre del modelo es obligatorio." };
   const category = CATEGORIES.includes(input.category as never) ? input.category : "OTROS";
@@ -107,6 +110,7 @@ export async function crearProducto(input: ProductoInput): Promise<ActionResult>
 }
 
 export async function cambiarCategoria(id: number, category: string): Promise<ActionResult> {
+  await requireAdmin();
   if (!CATEGORIES.includes(category as never)) return { ok: false, error: "Categoría no válida." };
   const { error } = await db().from("products").update({ category }).eq("id", id);
   if (error) return { ok: false, error: error.message };
@@ -115,6 +119,7 @@ export async function cambiarCategoria(id: number, category: string): Promise<Ac
 }
 
 export async function eliminarProducto(id: number): Promise<ActionResult> {
+  await requireAdmin();
   const { error } = await db().from("products").delete().eq("id", id);
   if (error) return { ok: false, error: error.message };
   refrescar();
@@ -124,6 +129,7 @@ export async function eliminarProducto(id: number): Promise<ActionResult> {
 /* ── Ofertas ── */
 
 export async function agregarOferta(productId: number, input: OfertaInput): Promise<ActionResult> {
+  await requireAdmin();
   const oferta = limpiarOferta(input);
   const supabase = db();
   const { error } = await supabase
@@ -144,6 +150,7 @@ export async function editarOferta(
   id: number,
   cambios: { price_usd: number | null; shipping_usd: number; currency: Moneda; status: Status },
 ): Promise<ActionResult> {
+  await requireAdmin();
   const { error } = await db()
     .from("offers")
     .update({
@@ -159,6 +166,7 @@ export async function editarOferta(
 }
 
 export async function eliminarOferta(id: number): Promise<ActionResult> {
+  await requireAdmin();
   const { error } = await db().from("offers").delete().eq("id", id);
   if (error) return { ok: false, error: error.message };
   refrescar();
@@ -171,6 +179,7 @@ export type ResultadoRevision =
 
 /** Vuelve a leer todos los links de una tarjeta y actualiza precio y stock. */
 export async function revisarPrecios(productId: number): Promise<ResultadoRevision> {
+  await requireAdmin();
   const supabase = db();
   const { data: ofertas, error } = await supabase
     .from("offers")
@@ -222,6 +231,7 @@ export async function revisarPrecios(productId: number): Promise<ResultadoRevisi
 /* ── Foto de la tarjeta ── */
 
 export async function cambiarImagenProducto(id: number, url: string | null): Promise<ActionResult> {
+  await requireAdmin();
   const { error } = await db().from("products").update({ image_url: link(url) }).eq("id", id);
   if (error) return { ok: false, error: error.message };
   refrescar();
@@ -248,6 +258,7 @@ export type CambiosTienda = {
 };
 
 export async function guardarTienda(nombre: string, cambios: CambiosTienda): Promise<ActionResult> {
+  await requireAdmin();
   const name = txt(nombre, 40)?.toUpperCase();
   if (!name) return { ok: false, error: "La tienda necesita un nombre." };
   const fila: Record<string, unknown> = { name };
@@ -262,20 +273,22 @@ export async function guardarTienda(nombre: string, cambios: CambiosTienda): Pro
   }
   const { error } = await db().from("stores").upsert(fila, { onConflict: "name" });
   if (error) return { ok: false, error: error.message };
-  revalidatePath("/tiendas");
+  revalidatePath("/admin/tiendas");
   return { ok: true };
 }
 
 export async function eliminarTienda(id: number): Promise<ActionResult> {
+  await requireAdmin();
   const { error } = await db().from("stores").delete().eq("id", id);
   if (error) return { ok: false, error: error.message };
-  revalidatePath("/tiendas");
+  revalidatePath("/admin/tiendas");
   return { ok: true };
 }
 
 /* ── Ajustes ── */
 
 export async function guardarAjustes(_: ActionResult | null, form: FormData): Promise<ActionResult> {
+  await requireAdmin();
   const manual = txt(form.get("paralelo_manual"));
   const { error } = await db()
     .from("settings")

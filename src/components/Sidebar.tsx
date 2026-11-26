@@ -2,10 +2,11 @@
 
 import Link from "next/link";
 import { CATEGORIES } from "@/lib/types";
+import { cerrarSesion } from "@/app/auth-actions";
 
 const MODULOS = [
-  { label: "WISHLIST", no: "01", href: "/" },
-  { label: "TIENDAS", no: "02", href: "/tiendas" },
+  { label: "WISHLIST", no: "01", href: "/admin" },
+  { label: "TIENDAS", no: "02", href: "/admin/tiendas" },
   { label: "LOTES", no: "03" },
   { label: "STOCK", no: "04" },
   { label: "CAPITAL", no: "05" },
@@ -26,7 +27,7 @@ export default function Sidebar({
   const cats = ["TODO", ...CATEGORIES.filter((c) => (conteo?.[c] ?? 0) > 0 || c === categoria)];
   return (
     <aside className="sidebar">
-      <Link href="/" className="lockup" aria-label="Janiwa, ir al inicio">
+      <Link href="/admin" className="lockup" aria-label="Janiwa, ir al inicio del panel">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src="/logo.png" alt="" />
         <span className="lockup-text">
@@ -81,6 +82,11 @@ export default function Sidebar({
           );
         })}
       </nav>
+      <form action={cerrarSesion} className="logout">
+        <button type="submit" className="nav-item">
+          CERRAR SESIÓN →
+        </button>
+      </form>
     </aside>
   );
 }
