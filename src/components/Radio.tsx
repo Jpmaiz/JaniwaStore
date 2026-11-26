@@ -57,7 +57,10 @@ export default function Radio({ url, nombre }: { url: string; nombre: string }) 
       navigator.mediaSession.metadata = new MediaMetadata({
         title: nombre,
         artist: "Janiwa · Radio en vivo",
-        artwork: [{ src: "/icon.png", sizes: "512x512", type: "image/png" }],
+        artwork: [
+          { src: "/icons/icon-192.png", sizes: "192x192", type: "image/png" },
+          { src: "/icons/icon-512.png", sizes: "512x512", type: "image/png" },
+        ],
       });
     }
   }, [url, nombre, soltar]);

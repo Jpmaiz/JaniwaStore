@@ -30,7 +30,7 @@ export default function Sidebar({
     <aside className="sidebar">
       <Link href="/admin" className="lockup" aria-label="Janiwa, ir al inicio del panel">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/logo.png" alt="" />
+        <img src="/logo.png" alt="" width={233} height={320} />
         <span className="lockup-text">
           <h1 className="lockup-name">Janiwa</h1>
           <span className="lockup-sub">COMPRA / VENTA</span>

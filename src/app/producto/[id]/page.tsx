@@ -18,7 +18,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title: `${titulo} · Janiwa`,
     description: `Bs ${money(p.precio_venta_bs)} · ${p.disponibilidad === "stock" ? "En stock" : "Por encargo"} · Janiwa, Cochabamba`,
-    openGraph: { title: titulo, description: `Bs ${money(p.precio_venta_bs)}`, images: p.image_url ? [p.image_url] : [] },
+    openGraph: {
+      siteName: "Janiwa",
+      type: "website",
+      locale: "es_BO",
+      title: titulo,
+      description: `Bs ${money(p.precio_venta_bs)}`,
+      images: p.image_url ? [p.image_url] : ["/og.png"],
+    },
   };
 }
 

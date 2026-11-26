@@ -106,7 +106,7 @@ export default function LogoEscurridizo() {
       style={{ transform: `translate(${pos.x}px, ${pos.y}px) rotate(${pos.r}deg)` }}
     >
       {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src="/logo.png" alt="" />
+      <img src="/logo.png" alt="" width={233} height={320} />
       <span>Janiwa</span>
       {globo && (
         <span className="logo-globo" aria-hidden="true">

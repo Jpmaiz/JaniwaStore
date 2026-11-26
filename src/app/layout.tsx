@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import { ConfirmProvider } from "@/components/Confirm";
@@ -28,10 +28,30 @@ const pixel = localFont({
   display: "swap",
 });
 
+/** Dominio público: SITIO_URL si la defines; en Vercel se detecta solo */
+function dominio() {
+  const v = process.env.SITIO_URL ?? (process.env.VERCEL_PROJECT_PRODUCTION_URL ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}` : null);
+  try {
+    return new URL(v ?? "http://localhost:3000");
+  } catch {
+    return new URL("http://localhost:3000");
+  }
+}
+
+const DESCRIPCION = "Ropa, zapatillas y accesorios de EE. UU. en Cochabamba. Elige y coordina por WhatsApp.";
+
 export const metadata: Metadata = {
+  metadataBase: dominio(),
   title: "Janiwa",
-  description: "Wishlist y calculadora de compras USA → Bolivia",
+  description: DESCRIPCION,
+  applicationName: "Janiwa",
+  appleWebApp: { title: "Janiwa", statusBarStyle: "black-translucent" },
+  openGraph: { siteName: "Janiwa", type: "website", locale: "es_BO", title: "Janiwa", description: DESCRIPCION,
+    images: [{ url: "/og.png", width: 1200, height: 630, alt: "Janiwa" }] },
+  twitter: { card: "summary_large_image" },
 };
+
+export const viewport: Viewport = { themeColor: "#110a06", colorScheme: "dark" };
 
 /** Radio opcional: solo aparece si RADIO_URL es un enlace https válido. */
 function datosRadio() {
