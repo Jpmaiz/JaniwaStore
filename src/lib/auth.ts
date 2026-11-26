@@ -9,8 +9,12 @@ import { createServerClient } from "@supabase/ssr";
  * Los datos se siguen leyendo con la clave secreta, y solo después de comprobar que eres tú.
  */
 
-const URL_SUPABASE = process.env.SUPABASE_URL;
-const CLAVE_PUBLICA = process.env.SUPABASE_PUBLISHABLE_KEY;
+// Acepta los nombres propios o los que sugiere Supabase (NEXT_PUBLIC_…)
+const URL_SUPABASE = process.env.SUPABASE_URL ?? process.env.NEXT_PUBLIC_SUPABASE_URL;
+const CLAVE_PUBLICA =
+  process.env.SUPABASE_PUBLISHABLE_KEY ??
+  process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ??
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
 export function authConfigurado(): boolean {
   return !!(URL_SUPABASE && CLAVE_PUBLICA && correosAdmin().length);

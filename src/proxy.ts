@@ -9,8 +9,11 @@ import { createServerClient } from "@supabase/ssr";
  */
 export async function proxy(request: NextRequest) {
   let respuesta = NextResponse.next({ request });
-  const url = process.env.SUPABASE_URL;
-  const clave = process.env.SUPABASE_PUBLISHABLE_KEY;
+  const url = process.env.SUPABASE_URL ?? process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const clave =
+    process.env.SUPABASE_PUBLISHABLE_KEY ??
+    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ??
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
   const enAdmin = request.nextUrl.pathname.startsWith("/admin");
 
   if (!url || !clave) {
