@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import { ConfirmProvider } from "@/components/Confirm";
+import Radio from "@/components/Radio";
 
 const zodiak = localFont({
   src: "../../public/fonts/Zodiak-Variable.woff2",
@@ -32,11 +33,20 @@ export const metadata: Metadata = {
   description: "Wishlist y calculadora de compras USA → Bolivia",
 };
 
+/** Radio opcional: solo aparece si RADIO_URL es un enlace https válido. */
+function datosRadio() {
+  const url = process.env.RADIO_URL?.trim();
+  if (!url || !url.startsWith("https://")) return null;
+  return { url, nombre: process.env.RADIO_NOMBRE?.trim() || "Radio en vivo" };
+}
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+  const radio = datosRadio();
   return (
     <html lang="es" className={`${zodiak.variable} ${plexMono.variable} ${pixel.variable}`}>
       <body>
         <ConfirmProvider>{children}</ConfirmProvider>
+        {radio && <Radio url={radio.url} nombre={radio.nombre} />}
       </body>
     </html>
   );
