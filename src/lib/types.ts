@@ -58,6 +58,9 @@ export type Product = {
   llegada_estimada: string | null;
   descripcion: string | null;
   interes: number;
+  genero: "mujer" | "hombre" | "unisex" | null;
+  subcategoria: string | null;
+  publicado_en: string | null;
 };
 
 export type Disponibilidad = "stock" | "encargo";
@@ -74,6 +77,8 @@ export type ProductoPublico = {
   disponibilidad: Disponibilidad;
   llegada_estimada: string | null;
   descripcion: string | null;
+  genero: "mujer" | "hombre" | "unisex" | null;
+  subcategoria: string | null;
 };
 
 export type Settings = {

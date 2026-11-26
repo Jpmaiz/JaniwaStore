@@ -18,6 +18,7 @@ export async function cargarDatos(): Promise<Datos> {
         .select(
           "id, created_at, name, color, category, image_url, destino, notes, " +
             "publicado, precio_venta_bs, precio_minimo_bs, tallas, disponibilidad, llegada_estimada, descripcion, interes, " +
+            "genero, subcategoria, publicado_en, " +
             "offers (id, product_id, created_at, url, store, price_usd, shipping_usd, currency, status, image_url, checked_at, check_error)",
         )
         .order("created_at", { ascending: false }),
@@ -25,7 +26,9 @@ export async function cargarDatos(): Promise<Datos> {
     ]);
     if (prods.error) {
       const m = prods.error.message;
-      const sql = /publicado|precio_venta|tallas|disponibilidad|interes/i.test(m)
+      const sql = /genero|subcategoria|publicado_en/i.test(m)
+        ? "007_catalogo.sql"
+        : /publicado|precio_venta|tallas|disponibilidad|interes/i.test(m)
         ? "006_venta.sql"
         : /currency/i.test(m)
           ? "005_monedas.sql"

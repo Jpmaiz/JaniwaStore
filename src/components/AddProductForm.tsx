@@ -54,6 +54,7 @@ export default function AddProductForm({
   // true cuando tú eliges la categoría a mano: desde ahí no la cambiamos solos
   const [catManual, setCatManual] = useState(false);
   const [catLeida, setCatLeida] = useState(false);
+  const [detectado, setDetectado] = useState<{ genero: Lectura["genero"]; subcategoria: string | null }>({ genero: null, subcategoria: null });
 
   // Mientras escribes el nombre, sugerimos la categoría
   useEffect(() => {
@@ -83,6 +84,7 @@ export default function AddProductForm({
       status: data?.status ?? prev.status,
     }));
     setCatLeida(!!data?.category);
+    setDetectado({ genero: data?.genero ?? null, subcategoria: data?.subcategoria ?? null });
     setAvisos(av);
     setError(err);
     setLeido(true);
@@ -114,6 +116,8 @@ export default function AddProductForm({
         destino: c.destino,
         notes: c.notes || null,
         image_url: c.image_url || null,
+        genero: detectado.genero,
+        subcategoria: detectado.subcategoria,
         oferta: oferta(),
       });
       if (r.ok && r.id) onDone({ id: r.id, nueva: true });

@@ -8,6 +8,7 @@ import type { ProductoPublico } from "./types";
  */
 const COLUMNAS =
   "id, name, color, category, image_url, precio_venta_bs, tallas, disponibilidad, llegada_estimada, descripcion, " +
+  "genero, subcategoria, " +
   "offers (image_url)";
 
 type Fila = Omit<ProductoPublico, "precio_venta_bs"> & {
@@ -29,6 +30,8 @@ function aPublico(f: Fila): ProductoPublico | null {
     disponibilidad: f.disponibilidad === "stock" ? "stock" : "encargo",
     llegada_estimada: f.llegada_estimada,
     descripcion: f.descripcion,
+    genero: f.genero ?? null,
+    subcategoria: f.subcategoria ?? null,
   };
 }
 
@@ -38,7 +41,7 @@ export async function cargarVitrina(): Promise<{ productos: ProductoPublico[]; e
       .from("products")
       .select(COLUMNAS)
       .eq("publicado", true)
-      .order("disponibilidad", { ascending: false }) // "stock" antes que "encargo"
+      .order("publicado_en", { ascending: false, nullsFirst: false }) // lo último publicado primero
       .order("created_at", { ascending: false });
     if (error) throw new Error(error.message);
     return {

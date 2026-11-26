@@ -1,5 +1,6 @@
 import "server-only";
 import { adivinarCategoria, detectarTienda, normalizar } from "./tiendas";
+import { adivinarGenero, adivinarTipo, type Genero } from "./catalogo";
 import type { Moneda, Status } from "./types";
 
 /**
@@ -21,6 +22,8 @@ export type Lectura = {
   image_url: string | null;
   status: Status | null;
   category: string | null;
+  genero: Genero | null;
+  subcategoria: string | null;
 };
 
 export type ResultadoLectura =
@@ -325,6 +328,8 @@ export async function leerPagina(urlTexto: string): Promise<ResultadoLectura> {
     image_url: null,
     status: null,
     category: null,
+    genero: null,
+    subcategoria: null,
   };
 
   let html: string;
@@ -386,7 +391,11 @@ export async function leerPagina(urlTexto: string): Promise<ResultadoLectura> {
   };
   if (data.image_url?.startsWith("//")) data.image_url = "https:" + data.image_url;
   if (data.image_url && data.image_url.startsWith("/")) data.image_url = new URL(data.image_url, url).href;
-  data.category = adivinarCategoria(`${data.name ?? ""} ${nombreBruto ?? ""}`, pistasDeCategoria(html));
+  const pistas = pistasDeCategoria(html);
+  const textoNombre = `${data.name ?? ""} ${nombreBruto ?? ""}`;
+  data.category = adivinarCategoria(textoNombre, pistas);
+  data.genero = adivinarGenero(textoNombre, pistas);
+  data.subcategoria = data.category === "ROPA" ? adivinarTipo(textoNombre, pistas) : null;
 
   const avisos: string[] = [];
   if (!data.name && data.price_usd == null) {

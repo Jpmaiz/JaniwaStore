@@ -5,6 +5,7 @@ import { guardarVenta } from "@/app/actions";
 import { money } from "@/lib/calc";
 import type { Disponibilidad, Product } from "@/lib/types";
 import Row from "./Row";
+import { adivinarGenero, adivinarTipo, TIPOS_ROPA, type Genero } from "@/lib/catalogo";
 
 const num = (v: string) => (v.trim() ? Number(v.replace(",", ".")) : null);
 
@@ -17,6 +18,12 @@ export default function VentaPanel({ product, costoBs }: { product: Product; cos
   const [disp, setDisp] = useState<Disponibilidad>(product.disponibilidad);
   const [llegada, setLlegada] = useState(product.llegada_estimada ?? "");
   const [descripcion, setDescripcion] = useState(product.descripcion ?? "");
+  // si aún no se definió, proponemos lo que se deduce del nombre
+  const generoSugerido = product.genero ?? adivinarGenero(`${product.name} ${product.color ?? ""}`);
+  const [genero, setGenero] = useState<Genero | "">(generoSugerido ?? "unisex");
+  const esRopa = product.category === "ROPA";
+  const tipoSugerido = product.subcategoria ?? (esRopa ? adivinarTipo(product.name) : null);
+  const [tipo, setTipo] = useState(tipoSugerido ?? "");
   const [mensaje, setMensaje] = useState<{ ok: boolean; texto: string } | null>(null);
   const [guardando, startTransition] = useTransition();
 
@@ -36,6 +43,8 @@ export default function VentaPanel({ product, costoBs }: { product: Product; cos
         disponibilidad: disp,
         llegada_estimada: llegada || null,
         descripcion: descripcion || null,
+        genero: genero || null,
+        subcategoria: esRopa ? tipo || null : null,
       });
       setMensaje(r.ok ? { ok: true, texto: publicado ? "Guardado · visible en la tienda" : "Guardado · oculto en la tienda" } : { ok: false, texto: r.error });
     });
@@ -85,6 +94,35 @@ export default function VentaPanel({ product, costoBs }: { product: Product; cos
           </label>
         ) : (
           <div />
+        )}
+      </div>
+
+      <div className="form-grid">
+        <label className="field">
+          <span>DEPARTAMENTO{!product.genero && generoSugerido ? " · SUGERIDO" : ""}</span>
+          <select value={genero} onChange={(e) => setGenero(e.target.value as Genero)}>
+            <option value="unisex">UNISEX (MUJER Y HOMBRE)</option>
+            <option value="mujer">MUJER</option>
+            <option value="hombre">HOMBRE</option>
+          </select>
+        </label>
+        {esRopa ? (
+          <label className="field">
+            <span>TIPO DE PRENDA{!product.subcategoria && tipoSugerido ? " · SUGERIDO" : ""}</span>
+            <select value={tipo} onChange={(e) => setTipo(e.target.value)}>
+              <option value="">SIN DEFINIR</option>
+              {TIPOS_ROPA.map((t) => (
+                <option key={t.id} value={t.id}>
+                  {t.nombre.toUpperCase()}
+                </option>
+              ))}
+            </select>
+          </label>
+        ) : (
+          <div className="field">
+            <span>SECCIÓN EN LA TIENDA</span>
+            <p className="detected">{product.category}</p>
+          </div>
         )}
       </div>
 

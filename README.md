@@ -38,6 +38,7 @@ calculadora de costo **en tus manos en USA** y conversión a **Bs al dólar para
    - `supabase/003_tiendas.sql` (apartado de tiendas)
    - `supabase/005_monedas.sql` (precios en $, Bs o €)
    - `supabase/006_venta.sql` (datos de venta y tienda pública)
+   - `supabase/007_catalogo.sql` (Mujer / Hombre, tipo de prenda, "Lo nuevo")
    - o todo junto: `supabase/instalar_todo.sql`
 4. **Variables de entorno**: copia `.env.example` como `.env.local` y llena:
    - `SUPABASE_URL` → Project Settings › Data API (solo hasta `.supabase.co`)
@@ -104,10 +105,17 @@ total Bs  = total USD × dólar paralelo
 ```
 
 ## Tienda pública
-- En la ficha de cada producto del panel, sección **Venta**: precio en Bs, precio mínimo, tallas,
-  en stock / por encargo (con fecha estimada), descripción y casilla **Publicado**.
-- La tienda muestra solo lo publicado y nunca costos, ofertas, tiendas de origen ni precio mínimo.
-- «Lo quiero» abre WhatsApp (`WHATSAPP_NUMERO`) con el código, modelo, color, talla, precio y link.
+Estilo tienda de ropa, pensada primero para celular:
+- `/` **Lo nuevo** (últimos publicados) · `/mujer` · `/hombre` · `/mujer/jeans`, `/hombre/poleras`…
+  · `/todo` · `/c/zapatillas`, `/c/accesorios`, `/c/skate`… · `/encargos` (próximamente)
+- Menú lateral de 2 niveles en celular; barra con departamentos en computadora.
+- Mujer y Hombre muestran ropa, zapatillas y accesorios; lo unisex aparece en ambos.
+- Secciones de ropa: poleras, camisas, hoodies, chompas, chamarras, jeans, pantalones, shorts,
+  buzos y vestidos (solo Mujer). Se definen en `src/lib/catalogo.ts`.
+- En el panel, sección **Venta** de cada producto: departamento, tipo de prenda (se sugieren solos),
+  precio en Bs, precio mínimo, tallas, en stock / por encargo, descripción y **Publicado**.
+- La tienda nunca muestra costos, ofertas, tiendas de origen ni precio mínimo.
+- «Lo quiero» abre WhatsApp (`WHATSAPP_NUMERO`) con código, modelo, color, talla, precio y link.
 
 ## Seguridad
 - El panel vive en `/admin`: el proxy (`src/proxy.ts`) manda al login si no hay sesión,

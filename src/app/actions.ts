@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { db } from "@/lib/supabase";
 import { requireAdmin } from "@/lib/auth";
+import { adivinarGenero, adivinarTipo, TIPOS_ROPA } from "@/lib/catalogo";
 import { leerPagina, type ResultadoLectura } from "@/lib/scraper";
 import { CATEGORIES, MONEDAS, STATUSES, type Moneda, type Status } from "@/lib/types";
 
@@ -25,8 +26,14 @@ export type ProductoInput = {
   destino: "venta" | "personal";
   notes: string | null;
   image_url: string | null;
+  genero?: "mujer" | "hombre" | "unisex" | null;
+  subcategoria?: string | null;
   oferta: OfertaInput;
 };
+
+const GENEROS_OK = ["mujer", "hombre", "unisex"];
+const generoValido = (g: unknown) => (typeof g === "string" && GENEROS_OK.includes(g) ? g : null);
+const tipoValido = (t: unknown) => (typeof t === "string" && TIPOS_ROPA.some((x) => x.id === t) ? t : null);
 
 /* ── Limpieza de datos que llegan del navegador ── */
 
@@ -97,6 +104,9 @@ export async function crearProducto(input: ProductoInput): Promise<ActionResult>
       destino: input.destino === "personal" ? "personal" : "venta",
       notes: txt(input.notes, 1000),
       image_url: link(input.image_url) ?? oferta.image_url,
+      // si el lector no lo detectó, lo deducimos del nombre
+      genero: generoValido(input.genero) ?? adivinarGenero(name),
+      subcategoria: category === "ROPA" ? tipoValido(input.subcategoria) ?? adivinarTipo(name) : null,
     })
     .select("id")
     .single();
@@ -298,6 +308,8 @@ export type DatosVenta = {
   disponibilidad: "stock" | "encargo";
   llegada_estimada: string | null;
   descripcion: string | null;
+  genero: "mujer" | "hombre" | "unisex" | null;
+  subcategoria: string | null;
 };
 
 export async function guardarVenta(id: number, d: DatosVenta): Promise<ActionResult> {
@@ -311,10 +323,17 @@ export async function guardarVenta(id: number, d: DatosVenta): Promise<ActionRes
     new Set((d.tallas ?? []).map((t) => txt(t, 12)?.toUpperCase()).filter((t): t is string => !!t)),
   ).slice(0, 30);
 
+  // fecha de la primera publicación: ordena "Lo nuevo"
+  const { data: actual } = await db().from("products").select("publicado_en").eq("id", id).maybeSingle();
+  const publicadoEn = d.publicado && !actual?.publicado_en ? new Date().toISOString() : actual?.publicado_en ?? null;
+
   const { error } = await db()
     .from("products")
     .update({
       publicado: !!d.publicado,
+      publicado_en: publicadoEn,
+      genero: generoValido(d.genero),
+      subcategoria: tipoValido(d.subcategoria),
       precio_venta_bs: precio,
       precio_minimo_bs: minimo,
       tallas,

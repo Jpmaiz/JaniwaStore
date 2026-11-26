@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { cargarProductoPublico, numeroWhatsApp } from "@/lib/tienda";
+import { cargarProductoPublico, cargarVitrina, numeroWhatsApp } from "@/lib/tienda";
 import { money } from "@/lib/calc";
-import Marca from "@/components/Marca";
+import Marco from "@/components/Marco";
 import FichaPublica from "@/components/FichaPublica";
 
 export const revalidate = 60;
@@ -23,22 +23,16 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function ProductoPage({ params }: Props) {
-  const p = await cargarProductoPublico(Number((await params).id));
+  const [p, { productos }] = await Promise.all([cargarProductoPublico(Number((await params).id)), cargarVitrina()]);
   if (!p) notFound();
-
   return (
-    <div className="shop">
-      <header className="shop-head">
-        <Link href="/" aria-label="Janiwa, inicio" className="shop-brand">
-          <Marca subtitulo="PRODUCTOS DE EE. UU." />
-        </Link>
-        <nav className="shop-nav" aria-label="Principal">
-          <Link href="/">← VER TODO</Link>
-        </nav>
-      </header>
+    <Marco productos={productos} numero={numeroWhatsApp()}>
+      <nav className="migas" aria-label="Ruta">
+        <Link href="/">← VOLVER A LA TIENDA</Link>
+      </nav>
       <main className="sheet sheet-page">
         <FichaPublica producto={p} numero={numeroWhatsApp()} />
       </main>
-    </div>
+    </Marco>
   );
 }
