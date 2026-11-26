@@ -12,7 +12,7 @@ import Dialog, { CloseButton } from "./Dialog";
 import FichaPublica from "./FichaPublica";
 
 /** Formas variadas para que la grilla quede "desordenada" como Pinterest (fijas por prenda) */
-const FORMAS = ["3 / 4", "4 / 5", "2 / 3", "1 / 1", "3 / 4", "4 / 5", "9 / 14"];
+const FORMAS = ["3 / 4", "1 / 1", "9 / 16", "4 / 5", "5 / 4", "2 / 3", "3 / 4", "9 / 13", "1 / 1"];
 
 type Chip = { href: string; texto: string; activo: boolean };
 

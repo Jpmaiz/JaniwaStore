@@ -824,3 +824,8 @@ a.btn-primary { color: var(--bg); }
 .radio-btn { width: 32px; height: 32px; background: none; color: var(--cream); border: 1px solid var(--line-strong); }
 .radio-nombre { font-size: 12px; }
 .radio-eq { height: 12px; }
+
+/* Títulos y subtítulos en el mismo crema que el nombre Janiwa */
+.shop-page h1, .shop-page h2, .shop-page h3, .shop-page h4, .overlay h3, .menu h2,
+.shop-title .small, .ficha-sub, .foot-how h2, .banner-txt h2 { color: var(--cream); }
+.shop-title .small, .ficha-sub { opacity: .85; }

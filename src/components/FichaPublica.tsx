@@ -43,7 +43,7 @@ export default function FichaPublica({
 
       <div className="sheet-body">
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", minHeight: 44 }}>
-          <span className="small muted">
+          <span className="small ficha-sub">
             {codigo(p.id)} · {p.category}
           </span>
           {cerrar}
@@ -51,7 +51,7 @@ export default function FichaPublica({
 
         <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
           <h3>{p.name}</h3>
-          {p.color && <p className="small muted">{p.color.toUpperCase()}</p>}
+          {p.color && <p className="small ficha-sub">{p.color.toUpperCase()}</p>}
         </div>
 
         <div className="total" style={{ borderTop: 0, paddingTop: 0 }}>
