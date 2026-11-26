@@ -74,14 +74,17 @@ export default function Marco({
       <div className="shop-main">{children}</div>
 
       <footer className="shop-foot">
-        <section className="foot-how" aria-labelledby="como-comprar">
-          <h2 id="como-comprar">Cómo comprar</h2>
+        <details className="foot-how">
+          <summary>
+            <h2>Cómo comprar</h2>
+            <span className="foot-how-icono" aria-hidden="true" />
+          </summary>
           <ol>
             <li><span className="how-n">01</span><span><b>Elige</b> tu prenda: cada una es única, en una sola talla.</span></li>
             <li><span className="how-n">02</span><span><b>Escríbenos</b>: el botón abre WhatsApp con tu pedido.</span></li>
             <li><span className="how-n">03</span><span><b>Coordinamos</b> el pago y la entrega contigo.</span></li>
           </ol>
-        </section>
+        </details>
         <div className="foot-links">
           {numero && (
             <a href={enlaceWhatsAppGeneral(numero)} target="_blank" rel="noreferrer">
