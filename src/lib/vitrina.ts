@@ -9,10 +9,14 @@ export function fechaCorta(iso: string | null): string | null {
   return m ? `${Number(m[3])} ${MESES[Number(m[2]) - 1]}` : null;
 }
 
-export function textoDisponibilidad(p: ProductoPublico): string {
-  if (p.disponibilidad === "stock") return "EN STOCK · ENTREGA INMEDIATA";
-  const f = fechaCorta(p.llegada_estimada);
-  return f ? `POR ENCARGO · LLEGA APROX. ${f}` : "POR ENCARGO";
+/** Cada prenda es una sola: "PIEZA ÚNICA · TALLA M" */
+export function textoPieza(p: ProductoPublico): string {
+  return p.tallas.length ? `PIEZA ÚNICA · TALLA ${p.tallas.join(" / ")}` : "PIEZA ÚNICA";
+}
+
+/** Etiqueta corta para la tarjeta: "TALLA M" */
+export function etiquetaTalla(p: ProductoPublico): string {
+  return p.tallas.length ? `TALLA ${p.tallas.join(" / ")}` : "PIEZA ÚNICA";
 }
 
 /** Link de WhatsApp con el mensaje ya escrito */

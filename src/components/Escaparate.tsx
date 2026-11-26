@@ -5,6 +5,7 @@ import { useCallback, useEffect, useState } from "react";
 import type { Anuncio, ProductoPublico } from "@/lib/types";
 import { filtrar, nombreCategoria, SECCIONES, seccionesDe, slugCategoria, type Vista } from "@/lib/catalogo";
 import { money } from "@/lib/calc";
+import { etiquetaTalla } from "@/lib/vitrina";
 import Banners from "./Banner";
 import Marco from "./Marco";
 import Dialog, { CloseButton } from "./Dialog";
@@ -148,9 +149,7 @@ export default function Escaparate({
                   // eslint-disable-next-line @next/next/no-img-element
                   <img className="shop-img-2" src={p.fotos[1]} alt="" loading="lazy" />
                 )}
-                <span className={`shop-badge ${p.disponibilidad === "stock" ? "is-stock" : ""}`}>
-                  {p.disponibilidad === "stock" ? "EN STOCK" : "POR ENCARGO"}
-                </span>
+                <span className="shop-badge is-stock">{etiquetaTalla(p)}</span>
               </span>
               <span className="shop-info">
                 <span className="shop-name">{p.name}</span>

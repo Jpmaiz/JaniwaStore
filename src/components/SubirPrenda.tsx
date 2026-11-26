@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useState, useTransition } from "react";
 import { crearPrenda } from "@/app/actions";
 import { adivinarGenero, adivinarTipo, TIPOS_ROPA, type Genero } from "@/lib/catalogo";
-import { CATEGORIES, type Disponibilidad } from "@/lib/types";
+import { CATEGORIES } from "@/lib/types";
 import Sidebar from "./Sidebar";
 import SubidorFotos from "./SubidorFotos";
 
@@ -20,13 +20,11 @@ export default function SubirPrenda() {
   const [categoria, setCategoria] = useState("ROPA");
   const [genero, setGenero] = useState<Genero | null>(null); // null = aún sin tocar → sugerido
   const [tipo, setTipo] = useState<string | null>(null);
-  const [tallas, setTallas] = useState<string[]>([]);
+  const [talla, setTalla] = useState(""); // pieza única: una sola talla
   const [otraTalla, setOtraTalla] = useState("");
   const [precio, setPrecio] = useState("");
   const [minimo, setMinimo] = useState("");
   const [costo, setCosto] = useState("");
-  const [disp, setDisp] = useState<Disponibilidad>("stock");
-  const [llegada, setLlegada] = useState("");
   const [descripcion, setDescripcion] = useState("");
   const [publicar, setPublicar] = useState(true);
   const [resultado, setResultado] = useState<{ ok: true; id: number; publicado: boolean } | { ok: false; error: string } | null>(null);
@@ -36,13 +34,11 @@ export default function SubirPrenda() {
   const generoFinal = genero ?? adivinarGenero(`${nombre} ${color}`) ?? "unisex";
   const tipoFinal = tipo ?? (esRopa ? adivinarTipo(nombre) ?? "" : "");
   const sugeridas = esRopa ? TALLAS_ROPA : categoria === "ZAPATILLAS" ? TALLAS_ZAP : [];
-  const opcionesTalla = [...sugeridas, ...tallas.filter((t) => !sugeridas.includes(t))];
+  const opcionesTalla = talla && !sugeridas.includes(talla) ? [...sugeridas, talla] : sugeridas;
 
-  const alternarTalla = (t: string) =>
-    setTallas((ts) => (ts.includes(t) ? ts.filter((x) => x !== t) : [...ts, t]));
   const agregarTalla = () => {
-    const nuevas = otraTalla.split(/[,;]+/).map((t) => t.trim().toUpperCase()).filter(Boolean);
-    setTallas((ts) => Array.from(new Set([...ts, ...nuevas])));
+    const t = otraTalla.trim().toUpperCase();
+    if (t) setTalla(t);
     setOtraTalla("");
   };
 
@@ -52,11 +48,10 @@ export default function SubirPrenda() {
     setColor("");
     setGenero(null);
     setTipo(null);
-    setTallas([]);
+    setTalla("");
     setPrecio("");
     setMinimo("");
     setCosto("");
-    setLlegada("");
     setDescripcion("");
     setResultado(null);
     window.scrollTo({ top: 0 });
@@ -74,9 +69,9 @@ export default function SubirPrenda() {
         publicado: publicar,
         precio_venta_bs: num(precio),
         precio_minimo_bs: num(minimo),
-        tallas,
-        disponibilidad: disp,
-        llegada_estimada: disp === "encargo" ? llegada || null : null,
+        tallas: talla ? [talla] : [],
+        disponibilidad: "stock",
+        llegada_estimada: null,
         descripcion: descripcion || null,
         genero: generoFinal,
         subcategoria: esRopa ? tipoFinal || null : null,
@@ -154,7 +149,7 @@ export default function SubirPrenda() {
                   value={categoria}
                   onChange={(e) => {
                     setCategoria(e.target.value);
-                    setTallas([]);
+                    setTalla("");
                   }}
                 >
                   {CATEGORIES.map((c) => (
@@ -192,11 +187,11 @@ export default function SubirPrenda() {
             </div>
 
             <fieldset className="tallas">
-              <legend className="label">TALLAS QUE TIENES {tallas.length ? `· ${tallas.join(", ")}` : ""}</legend>
+              <legend className="label">TALLA · PIEZA ÚNICA {talla ? `· ${talla}` : ""}</legend>
               {opcionesTalla.length > 0 && (
                 <div className="tallas-lista">
                   {opcionesTalla.map((t) => (
-                    <button key={t} type="button" className="talla" aria-pressed={tallas.includes(t)} onClick={() => alternarTalla(t)}>
+                    <button key={t} type="button" className="talla" aria-pressed={talla === t} onClick={() => setTalla(talla === t ? "" : t)}>
                       {t}
                     </button>
                   ))}
@@ -207,7 +202,7 @@ export default function SubirPrenda() {
                   className="tag-input"
                   type="text"
                   value={otraTalla}
-                  placeholder={esRopa ? "Otra talla (ej. 32x30)" : "Talla (ej. 8.5, ÚNICA)"}
+                  placeholder={esRopa ? "Otra talla (ej. 32x30)" : "Talla (ej. 8.5, ESTÁNDAR)"}
                   aria-label="Agregar otra talla"
                   onChange={(e) => setOtraTalla(e.target.value)}
                   onKeyDown={(e) => {
@@ -219,7 +214,7 @@ export default function SubirPrenda() {
                   style={{ flex: 1, minWidth: 0 }}
                 />
                 <button type="button" className="btn btn-outline" onClick={agregarTalla} disabled={!otraTalla.trim()}>
-                  + AGREGAR
+                  USAR
                 </button>
               </div>
             </fieldset>
@@ -247,20 +242,8 @@ export default function SubirPrenda() {
                 <span>LO QUE TE COSTÓ (USD) · SOLO TÚ</span>
                 <input type="number" inputMode="decimal" min="0" step="0.01" value={costo} placeholder="Opcional" onChange={(e) => setCosto(e.target.value)} />
               </label>
-              <label className="field">
-                <span>DISPONIBILIDAD</span>
-                <select value={disp} onChange={(e) => setDisp(e.target.value as Disponibilidad)}>
-                  <option value="stock">EN STOCK (LO TENGO)</option>
-                  <option value="encargo">POR ENCARGO</option>
-                </select>
-              </label>
+              <div />
             </div>
-            {disp === "encargo" && (
-              <label className="field">
-                <span>LLEGADA ESTIMADA</span>
-                <input type="date" value={llegada} onChange={(e) => setLlegada(e.target.value)} />
-              </label>
-            )}
           </section>
 
           <div className="subir-final">

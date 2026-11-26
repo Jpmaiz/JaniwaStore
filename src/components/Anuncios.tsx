@@ -16,7 +16,6 @@ const DESTINOS = [
   ["/todo", "VER TODO"],
   ["/c/zapatillas", "ZAPATILLAS"],
   ["/c/accesorios", "ACCESORIOS"],
-  ["/encargos", "ENCARGOS"],
   ["otro", "OTRO LINK…"],
 ] as const;
 

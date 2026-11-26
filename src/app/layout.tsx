@@ -38,7 +38,7 @@ function dominio() {
   }
 }
 
-const DESCRIPCION = "Ropa, zapatillas y accesorios de EE. UU. en Cochabamba. Elige y coordina por WhatsApp.";
+const DESCRIPCION = "Ropa, zapatillas y accesorios originales en Cochabamba. Piezas únicas: una sola prenda por talla. Coordina por WhatsApp.";
 
 export const metadata: Metadata = {
   metadataBase: dominio(),

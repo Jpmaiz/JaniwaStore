@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { registrarInteres } from "@/app/public-actions";
 import { codigo, money } from "@/lib/calc";
-import { enlaceWhatsApp, textoDisponibilidad } from "@/lib/vitrina";
+import { enlaceWhatsApp, textoPieza } from "@/lib/vitrina";
 import type { ProductoPublico } from "@/lib/types";
 import Galeria from "./Galeria";
 
@@ -55,11 +55,13 @@ export default function FichaPublica({
         </div>
 
         <div className="total" style={{ borderTop: 0, paddingTop: 0 }}>
-          <span className="label">{textoDisponibilidad(p)}</span>
+          <span className="label">{textoPieza(p)}</span>
           <span className="total-num">Bs {money(p.precio_venta_bs)}</span>
         </div>
 
-        {p.tallas.length > 0 && (
+        <p className="small muted unica">Solo hay una. Cuando se vende, no vuelve.</p>
+
+        {p.tallas.length > 1 && (
           <fieldset className="tallas">
             <legend className="label">TALLA {talla ? `· ${talla}` : ""}</legend>
             <div className="tallas-lista">

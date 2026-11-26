@@ -5,7 +5,7 @@ import Escaparate from "@/components/Escaparate";
 export const revalidate = 60;
 export const metadata: Metadata = {
   title: "Janiwa · Lo nuevo",
-  description: "Ropa, zapatillas y accesorios de EE. UU. por encargo en Cochabamba. Elige y coordina por WhatsApp.",
+  description: "Ropa, zapatillas y accesorios originales en Cochabamba. Piezas únicas: una sola prenda por talla. Coordina por WhatsApp.",
 };
 
 export default async function Inicio() {

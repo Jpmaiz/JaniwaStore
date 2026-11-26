@@ -5,7 +5,7 @@ export default function manifest(): MetadataRoute.Manifest {
   return {
     name: "Janiwa",
     short_name: "Janiwa",
-    description: "Ropa, zapatillas y accesorios de EE. UU. en Cochabamba.",
+    description: "Piezas únicas de ropa, zapatillas y accesorios en Cochabamba.",
     start_url: "/",
     display: "standalone",
     background_color: "#110a06",

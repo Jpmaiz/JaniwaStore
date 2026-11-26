@@ -77,13 +77,12 @@ export default function Marco({
         <section className="foot-how" aria-labelledby="como-comprar">
           <h2 id="como-comprar">Cómo comprar</h2>
           <ol>
-            <li><span className="how-n">01</span><span><b>Elige</b> el producto y tu talla.</span></li>
+            <li><span className="how-n">01</span><span><b>Elige</b> tu prenda: cada una es única, en una sola talla.</span></li>
             <li><span className="how-n">02</span><span><b>Escríbenos</b>: el botón abre WhatsApp con tu pedido.</span></li>
             <li><span className="how-n">03</span><span><b>Coordinamos</b> el pago y la entrega contigo.</span></li>
           </ol>
         </section>
         <div className="foot-links">
-          <Link href="/encargos">ENCARGOS USA ⇄ BOLIVIA · PRONTO</Link>
           {numero && (
             <a href={enlaceWhatsAppGeneral(numero)} target="_blank" rel="noreferrer">
               WHATSAPP ↗
@@ -186,13 +185,10 @@ function Menu({
               ))}
             </ul>
 
-            <Link href="/encargos" onClick={cerrar} className="menu-extra">
-              <span className="menu-extra-top">
-                <span className="label">ENCARGOS USA ⇄ BOLIVIA</span>
-                <span className="tag-pronto">PRONTO</span>
-              </span>
-              <span className="small muted">Traer de EE. UU. lo que no está en la tienda, o enviar de Bolivia a EE. UU.</span>
-            </Link>
+            <div className="menu-extra">
+              <span className="label">PIEZAS ÚNICAS</span>
+              <span className="small muted">Cada prenda es una sola, en una sola talla. Cuando se vende, no vuelve.</span>
+            </div>
 
             {numero && (
               <a className="menu-wa" href={enlaceWhatsAppGeneral(numero)} target="_blank" rel="noreferrer">

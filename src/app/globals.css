@@ -3,10 +3,10 @@
   --panel: #1a0f09;
   --line: #2e1c12;
   --line-strong: #3a2418;
-  --dots: #553825;
+  --dots: #3d3129;
   --cream: #f3ebd3;
-  --muted: #b5a386;
-  --accent: #e3a65b;
+  --muted: #9c8e7c;
+  --accent: #a3805c;
   --serif: var(--font-serif), Georgia, serif;
   --mono: var(--font-mono), ui-monospace, monospace;
 }
@@ -601,9 +601,6 @@ a.nav-item { color: var(--muted); text-decoration: none; }
   display: flex; flex-direction: column; gap: 8px; margin: 22px 18px 0; padding: 14px 16px;
   border: 1px dashed var(--dots); color: var(--cream); text-decoration: none; line-height: 1.5;
 }
-.menu-extra:hover { border-color: var(--accent); }
-.menu-extra-top { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
-.tag-pronto { padding: 2px 6px; font-size: 9px; letter-spacing: 0.14em; background: var(--accent); color: var(--bg); font-weight: 600; }
 .menu-wa {
   display: flex; align-items: center; justify-content: center; gap: 10px; margin: 16px 18px 28px; min-height: 50px;
   border: 1px solid var(--cream); color: var(--cream); text-decoration: none; font-size: 11px; letter-spacing: 0.1em;
@@ -638,20 +635,16 @@ a.nav-item { color: var(--muted); text-decoration: none; }
 .foot-links a { color: var(--cream); min-height: 32px; display: inline-flex; align-items: center; }
 .foot-legal { margin-top: 14px; font-size: 10px; letter-spacing: 0.14em; color: var(--muted); }
 
-/* Encargos y página de producto */
-.encargos { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin-top: 10px; }
-.encargo-card { border: 1px solid var(--line-strong); padding: 22px 20px; display: flex; flex-direction: column; gap: 10px; line-height: 1.6; font-size: 13px; }
-.encargo-card h2 { font-size: 24px; line-height: 1.1; }
+/* Página de producto */
 a.btn { color: var(--cream); text-decoration: none; display: inline-flex; align-items: center; justify-content: center; }
 a.btn-primary { color: var(--bg); }
-.encargos + .actions .btn { text-decoration: none; display: inline-flex; align-items: center; }
 .migas { padding: 18px 0 0; font-size: 11px; letter-spacing: 0.1em; }
 .migas a { color: var(--cream); min-height: 32px; display: inline-flex; align-items: center; }
 
 @media (max-width: 640px) {
   .shop { padding: 0 16px 28px; }
   .shop-grid { columns: 2; column-gap: 10px; }
-  .foot-how ol, .encargos { grid-template-columns: 1fr; }
+  .foot-how ol { grid-template-columns: 1fr; }
 }
 
 /* ───────── Radio en vivo ───────── */
@@ -766,3 +759,5 @@ a.btn-primary { color: var(--bg); }
   .subir-final .btn-primary { width: 100%; }
   .anuncio-fila img { width: 72px; }
 }
+
+.unica { margin-top: -8px; line-height: 1.5; }
