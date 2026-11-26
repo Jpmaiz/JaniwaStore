@@ -26,3 +26,11 @@ export const IconoChat = () => (
     <path d="M3 4h14v9H8l-4 3v-3H3z" />
   </svg>
 );
+/** Cámara genérica (para el link de Instagram, sin usar su logo) */
+export const IconoCamara = () => (
+  <svg width="18" height="18" viewBox="0 0 18 18" {...base}>
+    <rect x="2.5" y="2.5" width="13" height="13" rx="3.5" />
+    <circle cx="9" cy="9" r="3.2" />
+    <path d="M13 5h.01" />
+  </svg>
+);

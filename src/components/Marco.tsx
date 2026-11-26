@@ -8,6 +8,7 @@ import { CATEGORIAS_MENU, nombreCategoria, seccionesDe, slugCategoria } from "@/
 import { enlaceWhatsAppGeneral } from "@/lib/vitrina";
 import { IconoCerrar, IconoChat, IconoDerecha, IconoIzquierda, IconoMenu } from "./Iconos";
 import LogoEscurridizo from "./LogoEscurridizo";
+import ComoComprar from "./ComoComprar";
 
 type Nivel = "raiz" | "mujer" | "hombre";
 const NOMBRE = { mujer: "Mujer", hombre: "Hombre" } as const;
@@ -74,24 +75,7 @@ export default function Marco({
       <div className="shop-main">{children}</div>
 
       <footer className="shop-foot">
-        <details className="foot-how">
-          <summary>
-            <h2>Cómo comprar</h2>
-            <span className="foot-how-icono" aria-hidden="true" />
-          </summary>
-          <ol>
-            <li><span className="how-n">01</span><span><b>Elige</b> tu prenda: cada una es única, en una sola talla.</span></li>
-            <li><span className="how-n">02</span><span><b>Escríbenos</b>: el botón abre WhatsApp con tu pedido.</span></li>
-            <li><span className="how-n">03</span><span><b>Coordinamos</b> el pago y la entrega contigo.</span></li>
-          </ol>
-        </details>
-        <div className="foot-links">
-          {numero && (
-            <a href={enlaceWhatsAppGeneral(numero)} target="_blank" rel="noreferrer">
-              WHATSAPP ↗
-            </a>
-          )}
-        </div>
+        <ComoComprar numero={numero} />
         <p className="foot-legal">JANIWA · COCHABAMBA, BOLIVIA</p>
       </footer>
       </div>

@@ -840,3 +840,55 @@ a.btn-primary { color: var(--bg); }
 .foot-how-icono::after { transform: rotate(90deg); }
 .foot-how[open] .foot-how-icono::after { transform: rotate(0deg); }
 .foot-how[open] ol { margin-top: 12px; animation: fade .25s ease; }
+
+/* ═════════ "Cómo comprar": telón + pasos en cascada ═════════ */
+.como { border-top: 0; }
+.como-cabeza { width: 100%; min-height: 56px; display: flex; align-items: center; justify-content: space-between; gap: 12px; text-align: left; color: var(--cream); }
+.como-cabeza h2 { font-size: 20px; margin: 0; position: relative; }
+.como-cabeza h2::after { content: ""; position: absolute; left: 0; right: 0; bottom: -4px; height: 1px; background: var(--cream); transform: scaleX(0); transform-origin: left; transition: transform .45s cubic-bezier(.2,.8,.2,1); }
+.como-cabeza:hover h2::after, .como.is-abierto .como-cabeza h2::after { transform: scaleX(1); }
+.como-cabeza:focus-visible { outline: 1px solid var(--cream); outline-offset: 4px; }
+/* + que gira hasta ser × */
+.como-icono { position: relative; width: 16px; height: 16px; flex: none; transition: transform .55s cubic-bezier(.5,1.6,.4,1); }
+.como-icono::before, .como-icono::after { content: ""; position: absolute; left: 0; right: 0; top: 50%; height: 1px; background: var(--cream); }
+.como-icono::after { transform: rotate(90deg); }
+.como.is-abierto .como-icono { transform: rotate(135deg); }
+/* el panel crece de alto (telón) */
+.como-panel { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .6s cubic-bezier(.7,0,.2,1); }
+.como.is-abierto .como-panel { grid-template-rows: 1fr; }
+.como-dentro { overflow: hidden; min-height: 0; }
+.como ol { list-style: none; margin: 0; padding: 14px 0 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.como li { position: relative; display: flex; gap: 12px; font-size: 12px; line-height: 1.6; padding-top: 14px; color: var(--muted); }
+.como li b { font-weight: 600; color: var(--cream); }
+/* la línea de cada paso se dibuja de izquierda a derecha */
+.como li::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 1px; background: var(--line-strong); transform: scaleX(0); transform-origin: left; transition: transform .5s cubic-bezier(.2,.8,.2,1); }
+.como-n { color: var(--accent); font-size: 11px; letter-spacing: .1em; }
+/* texto, número y links suben con desenfoque, uno tras otro */
+.como li > span, .como-links { opacity: 0; transform: translateY(16px); filter: blur(6px); transition: opacity .25s ease, transform .25s ease, filter .25s ease; }
+.como.is-abierto li::before { transform: scaleX(1); transition-delay: calc(.25s + var(--i) * .12s); }
+.como.is-abierto li > span, .como.is-abierto .como-links {
+  opacity: 1; transform: none; filter: none;
+  transition: opacity .5s ease, transform .6s cubic-bezier(.2,.9,.2,1.15), filter .5s ease;
+  transition-delay: calc(.3s + var(--i) * .12s);
+}
+.como.is-abierto li > span + span { transition-delay: calc(.38s + var(--i) * .12s); }
+/* links a WhatsApp e Instagram: el relleno barre de izquierda a derecha */
+.como-links { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 20px; margin: 22px 0 6px; padding-top: 16px; border-top: 1px solid var(--line); }
+.como-links .small { color: var(--cream); opacity: .85; }
+.como-links > div { display: flex; flex-wrap: wrap; gap: 10px; }
+.como-links a {
+  display: inline-flex; align-items: center; gap: 10px; min-height: 44px; padding: 0 16px;
+  border: 1px solid var(--cream); color: var(--cream); text-decoration: none; font-size: 11px; letter-spacing: .1em;
+  background: linear-gradient(var(--cream), var(--cream)) no-repeat left / 0% 100%;
+  transition: background-size .4s cubic-bezier(.7,0,.2,1), color .3s ease;
+}
+.como-links a:hover, .como-links a:focus-visible { background-size: 100% 100%; color: var(--bg); }
+@media (max-width: 640px) {
+  .como ol { grid-template-columns: 1fr; }
+  .como-links { flex-direction: column; align-items: stretch; }
+  .como-links a { flex: 1; justify-content: center; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .como-panel, .como-icono, .como li::before, .como li > span, .como-links, .como-links a, .como-cabeza h2::after { transition: none !important; }
+  .como li > span, .como-links { filter: none; transform: none; }
+}
