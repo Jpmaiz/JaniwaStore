@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { cargarVitrina, numeroWhatsApp } from "@/lib/tienda";
+import { cargarAnuncios, cargarVitrina, numeroWhatsApp } from "@/lib/tienda";
 import Escaparate from "@/components/Escaparate";
 
 export const revalidate = 60;
@@ -9,6 +9,6 @@ export const metadata: Metadata = {
 };
 
 export default async function Inicio() {
-  const { productos, error } = await cargarVitrina();
-  return <Escaparate productos={productos} vista={{ tipo: "nuevo" }} numero={numeroWhatsApp()} error={error} />;
+  const [{ productos, error }, anuncios] = await Promise.all([cargarVitrina(), cargarAnuncios()]);
+  return <Escaparate productos={productos} vista={{ tipo: "nuevo" }} numero={numeroWhatsApp()} error={error} anuncios={anuncios} />;
 }

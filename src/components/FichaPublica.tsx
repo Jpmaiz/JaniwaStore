@@ -5,6 +5,7 @@ import { registrarInteres } from "@/app/public-actions";
 import { codigo, money } from "@/lib/calc";
 import { enlaceWhatsApp, textoDisponibilidad } from "@/lib/vitrina";
 import type { ProductoPublico } from "@/lib/types";
+import Galeria from "./Galeria";
 
 /** Detalle de un producto para el cliente: se usa en la ventana y en /producto/[id] */
 export default function FichaPublica({
@@ -37,14 +38,7 @@ export default function FichaPublica({
   return (
     <>
       <div className="sheet-media tex">
-        {p.image_url ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img src={p.image_url} alt={p.color ? `${p.name}, color ${p.color}` : p.name} />
-        ) : (
-          <div className="placeholder" style={{ position: "absolute", inset: 0, fontSize: 11 }}>
-            [ SIN IMAGEN ]
-          </div>
-        )}
+        <Galeria fotos={p.fotos} alt={p.color ? `${p.name}, color ${p.color}` : p.name} />
       </div>
 
       <div className="sheet-body">

@@ -1,6 +1,6 @@
 import "server-only";
 import { db } from "./supabase";
-import type { ProductoPublico } from "./types";
+import type { Anuncio, ProductoPublico } from "./types";
 
 /**
  * Datos de la tienda pública.
@@ -8,10 +8,11 @@ import type { ProductoPublico } from "./types";
  */
 const COLUMNAS =
   "id, name, color, category, image_url, precio_venta_bs, tallas, disponibilidad, llegada_estimada, descripcion, " +
-  "genero, subcategoria, " +
+  "genero, subcategoria, fotos, " +
   "offers (image_url)";
 
-type Fila = Omit<ProductoPublico, "precio_venta_bs"> & {
+type Fila = Omit<ProductoPublico, "precio_venta_bs" | "fotos"> & {
+  fotos: string[] | null;
   precio_venta_bs: number | string | null;
   offers: { image_url: string | null }[] | null;
 };
@@ -19,12 +20,15 @@ type Fila = Omit<ProductoPublico, "precio_venta_bs"> & {
 function aPublico(f: Fila): ProductoPublico | null {
   const precio = f.precio_venta_bs == null ? null : Number(f.precio_venta_bs);
   if (!precio) return null;
+  const propias = (f.fotos ?? []).filter(Boolean);
+  const portada = propias[0] ?? f.image_url ?? f.offers?.find((o) => o.image_url)?.image_url ?? null;
   return {
     id: f.id,
     name: f.name,
     color: f.color,
     category: f.category,
-    image_url: f.image_url ?? f.offers?.find((o) => o.image_url)?.image_url ?? null,
+    image_url: portada,
+    fotos: propias.length ? propias : portada ? [portada] : [],
     precio_venta_bs: precio,
     tallas: f.tallas ?? [],
     disponibilidad: f.disponibilidad === "stock" ? "stock" : "encargo",
@@ -67,4 +71,20 @@ export async function cargarProductoPublico(id: number): Promise<ProductoPublico
 export function numeroWhatsApp(): string | null {
   const n = (process.env.WHATSAPP_NUMERO ?? "").replace(/\D/g, "");
   return n.length >= 8 ? n : null;
+}
+
+/** Anuncios activos para el banner de la portada (lo último primero) */
+export async function cargarAnuncios(): Promise<Anuncio[]> {
+  try {
+    const { data, error } = await db()
+      .from("anuncios")
+      .select("id, titulo, texto, imagen_url, boton, enlace, activo")
+      .eq("activo", true)
+      .order("created_at", { ascending: false })
+      .limit(5);
+    if (error) return [];
+    return (data ?? []) as Anuncio[];
+  } catch {
+    return [];
+  }
 }

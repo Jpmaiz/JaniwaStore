@@ -72,6 +72,7 @@ export type ProductoPublico = {
   color: string | null;
   category: string;
   image_url: string | null;
+  fotos: string[]; // todas las fotos, la primera es la portada
   precio_venta_bs: number;
   tallas: string[];
   disponibilidad: Disponibilidad;
@@ -104,4 +105,14 @@ export type Store = {
   intereses: string[];
   notes: string | null;
   favorita: boolean;
+};
+
+export type Anuncio = {
+  id: number;
+  titulo: string;
+  texto: string | null;
+  imagen_url: string;
+  boton: string | null;
+  enlace: string | null;
+  activo: boolean;
 };

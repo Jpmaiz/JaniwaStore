@@ -2,9 +2,10 @@
 
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
-import type { ProductoPublico } from "@/lib/types";
+import type { Anuncio, ProductoPublico } from "@/lib/types";
 import { filtrar, nombreCategoria, SECCIONES, seccionesDe, slugCategoria, type Vista } from "@/lib/catalogo";
 import { money } from "@/lib/calc";
+import Banners from "./Banner";
 import Marco from "./Marco";
 import Dialog, { CloseButton } from "./Dialog";
 import FichaPublica from "./FichaPublica";
@@ -57,11 +58,13 @@ export default function Escaparate({
   vista,
   numero,
   error,
+  anuncios = [],
 }: {
   productos: ProductoPublico[];
   vista: Vista;
   numero: string | null;
   error: string | null;
+  anuncios?: Anuncio[];
 }) {
   const [abierto, setAbierto] = useState<number | null>(null);
   const lista = filtrar(productos, vista);
@@ -90,6 +93,7 @@ export default function Escaparate({
 
   return (
     <Marco productos={productos} numero={numero}>
+      {vista.tipo === "nuevo" && <Banners anuncios={anuncios} />}
       <section className="shop-title">
         <p className="small muted">
           {kicker} · {lista.length} {lista.length === 1 ? "PRODUCTO" : "PRODUCTOS"}
@@ -138,6 +142,11 @@ export default function Escaparate({
                   <span className="placeholder" style={{ height: 240 }}>
                     [ SIN IMAGEN ]
                   </span>
+                )}
+                {p.fotos[1] && (
+                  // segunda foto al pasar el cursor, como en las tiendas de ropa
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img className="shop-img-2" src={p.fotos[1]} alt="" loading="lazy" />
                 )}
                 <span className={`shop-badge ${p.disponibilidad === "stock" ? "is-stock" : ""}`}>
                   {p.disponibilidad === "stock" ? "EN STOCK" : "POR ENCARGO"}

@@ -6,11 +6,12 @@ import { cerrarSesion } from "@/app/auth-actions";
 
 const MODULOS = [
   { label: "WISHLIST", no: "01", href: "/admin" },
-  { label: "TIENDAS", no: "02", href: "/admin/tiendas" },
-  { label: "LOTES", no: "03" },
-  { label: "STOCK", no: "04" },
-  { label: "CAPITAL", no: "05" },
-  { label: "HISTÓRICO", no: "06" },
+  { label: "SUBIR PRENDA", no: "02", href: "/admin/subir" },
+  { label: "ANUNCIOS", no: "03", href: "/admin/anuncios" },
+  { label: "TIENDAS", no: "04", href: "/admin/tiendas" },
+  { label: "LOTES", no: "05" },
+  { label: "CAPITAL", no: "06" },
+  { label: "HISTÓRICO", no: "07" },
 ];
 
 export default function Sidebar({
@@ -19,7 +20,7 @@ export default function Sidebar({
   conteo,
   onCategoria,
 }: {
-  activo: "WISHLIST" | "TIENDAS";
+  activo: "WISHLIST" | "TIENDAS" | "SUBIR PRENDA" | "ANUNCIOS";
   categoria?: string;
   conteo?: Record<string, number>;
   onCategoria?: (c: string) => void;

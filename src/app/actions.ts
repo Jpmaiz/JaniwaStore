@@ -74,8 +74,8 @@ function refrescar() {
   revalidatePath("/admin");
   revalidatePath("/admin/tiendas");
   // la tienda pública también muestra fotos y nombres
-  revalidatePath("/");
-  revalidatePath("/producto/[id]", "page");
+  // toda la tienda pública (portada, Mujer, Hombre, categorías y fichas)
+  revalidatePath("/", "layout");
 }
 
 /* ── Lectura de links ── */
@@ -364,5 +364,170 @@ export async function guardarAjustes(_: ActionResult | null, form: FormData): Pr
     .eq("id", 1);
   if (error) return { ok: false, error: error.message };
   refrescar();
+  return { ok: true };
+}
+
+/* ── Fotos propias (Supabase Storage, carpeta "fotos") ── */
+
+const BUCKET = "fotos";
+const TIPOS_FOTO: Record<string, string> = { "image/webp": "webp", "image/jpeg": "jpg", "image/png": "png" };
+const MAX_FOTO = 5 * 1024 * 1024;
+
+/** Dirección pública de la carpeta de fotos, para aceptar solo fotos nuestras */
+function baseFotos(): string {
+  const url = (process.env.SUPABASE_URL ?? process.env.NEXT_PUBLIC_SUPABASE_URL ?? "").replace(/\/+$/, "");
+  return `${url}/storage/v1/object/public/${BUCKET}/`;
+}
+
+function fotoPropia(v: unknown): string | null {
+  const s = txt(v, 500);
+  return s && s.startsWith(baseFotos()) && !s.includes("..") ? s : null;
+}
+
+export async function subirFoto(form: FormData): Promise<{ ok: true; url: string } | { ok: false; error: string }> {
+  await requireAdmin();
+  const archivo = form.get("foto");
+  if (!(archivo instanceof File) || archivo.size === 0) return { ok: false, error: "No llegó ninguna foto." };
+  const ext = TIPOS_FOTO[archivo.type];
+  if (!ext) return { ok: false, error: "Formato no válido: usa JPG, PNG o WebP." };
+  if (archivo.size > MAX_FOTO) return { ok: false, error: "La foto pesa más de 5 MB." };
+  const carpeta = form.get("carpeta") === "anuncios" ? "anuncios" : "prendas";
+  const ruta = `${carpeta}/${new Date().toISOString().slice(0, 7)}/${crypto.randomUUID()}.${ext}`;
+  const { error } = await db()
+    .storage.from(BUCKET)
+    .upload(ruta, archivo, { contentType: archivo.type, cacheControl: "31536000", upsert: false });
+  if (error) {
+    const falta = /bucket not found/i.test(error.message);
+    return { ok: false, error: falta ? "Falta la carpeta de fotos: corre supabase/008_subidas.sql." : error.message };
+  }
+  return { ok: true, url: baseFotos() + ruta };
+}
+
+/** Borra una foto recién subida que al final no se usó */
+export async function borrarFoto(url: string): Promise<ActionResult> {
+  await requireAdmin();
+  const propia = fotoPropia(url);
+  if (!propia) return { ok: false, error: "Esa foto no es de Janiwa." };
+  const { error } = await db().storage.from(BUCKET).remove([propia.slice(baseFotos().length)]);
+  return error ? { ok: false, error: error.message } : { ok: true };
+}
+
+/* ── Subir prenda directo (sin link de tienda) ── */
+
+export type PrendaInput = {
+  name: string;
+  color: string | null;
+  category: string;
+  fotos: string[];
+  costo_usd: number | null;
+} & DatosVenta;
+
+export async function crearPrenda(d: PrendaInput): Promise<ActionResult> {
+  await requireAdmin();
+  const name = txt(d.name, 160);
+  if (!name) return { ok: false, error: "Ponle un nombre a la prenda." };
+  const fotos = Array.from(new Set((d.fotos ?? []).map(fotoPropia).filter((f): f is string => !!f))).slice(0, 8);
+  if (!fotos.length) return { ok: false, error: "Sube al menos una foto." };
+  const category = CATEGORIES.includes(d.category as (typeof CATEGORIES)[number]) ? d.category : "ROPA";
+  const precio = num(d.precio_venta_bs);
+  const minimo = num(d.precio_minimo_bs);
+  if (d.publicado && !precio) return { ok: false, error: "Para publicarla, ponle un precio de venta." };
+  if (precio && minimo && minimo > precio) return { ok: false, error: "El precio mínimo no puede ser mayor al de venta." };
+  const fecha = typeof d.llegada_estimada === "string" && /^\d{4}-\d{2}-\d{2}$/.test(d.llegada_estimada) ? d.llegada_estimada : null;
+  const tallas = Array.from(
+    new Set((d.tallas ?? []).map((t) => txt(t, 12)?.toUpperCase()).filter((t): t is string => !!t)),
+  ).slice(0, 30);
+
+  const { data, error } = await db()
+    .from("products")
+    .insert({
+      name,
+      color: txt(d.color, 60),
+      category,
+      store: "JANIWA",
+      price_usd: num(d.costo_usd) ?? 0,
+      shipping_usd: 0,
+      status: "EN STOCK",
+      destino: "venta",
+      image_url: fotos[0],
+      fotos,
+      publicado: !!d.publicado,
+      publicado_en: d.publicado ? new Date().toISOString() : null,
+      genero: generoValido(d.genero),
+      subcategoria: category === "ROPA" ? tipoValido(d.subcategoria) : null,
+      precio_venta_bs: precio,
+      precio_minimo_bs: minimo,
+      tallas,
+      disponibilidad: d.disponibilidad === "encargo" ? "encargo" : "stock",
+      llegada_estimada: d.disponibilidad === "encargo" ? fecha : null,
+      descripcion: txt(d.descripcion, 1500),
+    })
+    .select("id")
+    .single();
+  if (error) {
+    const falta = /fotos/.test(error.message) && /column/i.test(error.message);
+    return { ok: false, error: falta ? "Falta la columna de fotos: corre supabase/008_subidas.sql." : error.message };
+  }
+  refrescar();
+  return { ok: true, id: data.id };
+}
+
+/* ── Anuncios de la portada ── */
+
+function enlaceAnuncio(v: unknown): string | null {
+  const s = txt(v, 300);
+  if (!s) return null;
+  if (/^\/(?!\/)[\w\-/?=&.%#]*$/.test(s)) return s; // ruta de la tienda, ej. /mujer
+  return link(s)?.startsWith("https://") ? s : null;
+}
+
+export type AnuncioInput = {
+  titulo: string;
+  texto: string | null;
+  imagen_url: string;
+  boton: string | null;
+  enlace: string | null;
+};
+
+export async function crearAnuncio(d: AnuncioInput): Promise<ActionResult> {
+  await requireAdmin();
+  const titulo = txt(d.titulo, 80);
+  if (!titulo) return { ok: false, error: "Ponle un título al anuncio." };
+  const imagen = fotoPropia(d.imagen_url);
+  if (!imagen) return { ok: false, error: "Sube una foto para el anuncio." };
+  const enlace = enlaceAnuncio(d.enlace);
+  if (d.enlace && !enlace) return { ok: false, error: "El enlace debe ser una sección de la tienda (/mujer) o un link https." };
+  const { data, error } = await db()
+    .from("anuncios")
+    .insert({ titulo, texto: txt(d.texto, 200), imagen_url: imagen, boton: enlace ? txt(d.boton, 30)?.toUpperCase() ?? "VER MÁS" : null, enlace })
+    .select("id")
+    .single();
+  if (error) {
+    const falta = /anuncios/.test(error.message);
+    return { ok: false, error: falta ? "Falta la tabla de anuncios: corre supabase/008_subidas.sql." : error.message };
+  }
+  refrescar();
+  revalidatePath("/admin/anuncios");
+  return { ok: true, id: data.id };
+}
+
+export async function activarAnuncio(id: number, activo: boolean): Promise<ActionResult> {
+  await requireAdmin();
+  const { error } = await db().from("anuncios").update({ activo: !!activo }).eq("id", id);
+  if (error) return { ok: false, error: error.message };
+  refrescar();
+  revalidatePath("/admin/anuncios");
+  return { ok: true };
+}
+
+export async function eliminarAnuncio(id: number): Promise<ActionResult> {
+  await requireAdmin();
+  const { data } = await db().from("anuncios").select("imagen_url").eq("id", id).maybeSingle();
+  const { error } = await db().from("anuncios").delete().eq("id", id);
+  if (error) return { ok: false, error: error.message };
+  const propia = data?.imagen_url ? fotoPropia(data.imagen_url) : null;
+  if (propia) await db().storage.from(BUCKET).remove([propia.slice(baseFotos().length)]);
+  refrescar();
+  revalidatePath("/admin/anuncios");
   return { ok: true };
 }

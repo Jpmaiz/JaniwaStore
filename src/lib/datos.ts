@@ -1,6 +1,6 @@
 import "server-only";
 import { db } from "./supabase";
-import type { Offer, Product, Settings, Store } from "./types";
+import type { Anuncio, Offer, Product, Settings, Store } from "./types";
 
 const AJUSTES_POR_DEFECTO: Settings = { tax_pct: 7, colchon_pct: 10, paralelo_manual: null, eur_usd_manual: null };
 
@@ -91,4 +91,21 @@ export async function cargarTiendas(products: Product[]): Promise<{ stores: Stor
     }
   }
   return { stores: [...guardadas.map((s) => ({ ...s, intereses: s.intereses ?? [] })), ...extra], error: null };
+}
+
+/** Todos los anuncios (activos y pausados) para el panel */
+export async function cargarAnunciosAdmin(): Promise<{ anuncios: Anuncio[]; error: string | null }> {
+  try {
+    const { data, error } = await db()
+      .from("anuncios")
+      .select("id, titulo, texto, imagen_url, boton, enlace, activo")
+      .order("created_at", { ascending: false });
+    if (error) {
+      const falta = /anuncios/.test(error.message) && /(does not exist|schema cache)/i.test(error.message);
+      return { anuncios: [], error: falta ? "Falta la tabla de anuncios: corre supabase/008_subidas.sql en Supabase." : error.message };
+    }
+    return { anuncios: (data ?? []) as Anuncio[], error: null };
+  } catch (e) {
+    return { anuncios: [], error: e instanceof Error ? e.message : String(e) };
+  }
 }
