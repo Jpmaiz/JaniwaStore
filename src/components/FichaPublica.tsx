@@ -6,6 +6,7 @@ import { codigo, money } from "@/lib/calc";
 import { enlaceWhatsApp, textoPieza } from "@/lib/vitrina";
 import type { ProductoPublico } from "@/lib/types";
 import Galeria from "./Galeria";
+import { useBolsa } from "./Bolsa";
 
 /** Detalle de un producto para el cliente: se usa en la ventana y en /producto/[id] */
 export default function FichaPublica({
@@ -22,6 +23,8 @@ export default function FichaPublica({
   // link completo del producto (con el dominio donde esté publicada la tienda)
   const [url, setUrl] = useState(`/producto/${p.id}`);
   useEffect(() => setUrl(`${window.location.origin}/producto/${p.id}`), [p.id]);
+  const bolsa = useBolsa();
+  const enBolsa = bolsa.tiene(p.id);
   const faltaTalla = p.tallas.length > 0 && !talla;
   const wa = numero ? enlaceWhatsApp(numero, p, talla, url) : null;
 
@@ -77,18 +80,27 @@ export default function FichaPublica({
         {p.descripcion && <p className="desc">{p.descripcion}</p>}
 
         <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+          {enBolsa ? (
+            <button type="button" className="btn btn-primary" onClick={bolsa.abrir}>
+              EN TU BOLSA ✓ · VER BOLSA
+            </button>
+          ) : (
+            <button type="button" className="btn btn-primary" onClick={() => bolsa.agregar(p)}>
+              AGREGAR A LA BOLSA
+            </button>
+          )}
           {wa && !faltaTalla ? (
             <a
-              className="btn btn-primary btn-wa"
+              className="btn btn-wa"
               href={wa}
               target="_blank"
               rel="noreferrer"
               onClick={() => void registrarInteres(p.id)}
             >
-              LO QUIERO · ESCRIBIR POR WHATSAPP ↗
+              PEDIR SOLO ESTA POR WHATSAPP ↗
             </a>
           ) : (
-            <button type="button" className="btn btn-primary btn-wa" disabled>
+            <button type="button" className="btn btn-wa" disabled>
               {!wa ? "WHATSAPP NO CONFIGURADO" : "ELIGE TU TALLA"}
             </button>
           )}

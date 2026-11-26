@@ -9,6 +9,7 @@ import { enlaceWhatsAppGeneral } from "@/lib/vitrina";
 import { IconoCerrar, IconoChat, IconoDerecha, IconoIzquierda, IconoMenu } from "./Iconos";
 import LogoEscurridizo from "./LogoEscurridizo";
 import ComoComprar from "./ComoComprar";
+import { BotonBolsa } from "./Bolsa";
 
 type Nivel = "raiz" | "mujer" | "hombre";
 const NOMBRE = { mujer: "Mujer", hombre: "Hombre" } as const;
@@ -49,6 +50,7 @@ export default function Marco({
             ["/mujer", "MUJER"],
             ["/hombre", "HOMBRE"],
             ["/todo", "VER TODO"],
+            ["/outfits", "OUTFITS"],
             ["/c/zapatillas", "ZAPATILLAS"],
             ["/c/accesorios", "ACCESORIOS"],
           ].map(([href, txt]) => (
@@ -58,14 +60,15 @@ export default function Marco({
           ))}
         </nav>
 
-        {numero ? (
-          <a className="bar-btn bar-wa" href={enlaceWhatsAppGeneral(numero)} target="_blank" rel="noreferrer" aria-label="Escribir por WhatsApp">
-            <IconoChat />
-            <span>WHATSAPP</span>
-          </a>
-        ) : (
-          <span className="bar-btn" aria-hidden="true" />
-        )}
+        <div className="bar-der">
+          {numero && (
+            <a className="bar-btn bar-wa" href={enlaceWhatsAppGeneral(numero)} target="_blank" rel="noreferrer" aria-label="Escribir por WhatsApp">
+              <IconoChat />
+              <span>WHATSAPP</span>
+            </a>
+          )}
+          <BotonBolsa />
+        </div>
         </div>
       </header>
 
@@ -163,6 +166,7 @@ function Menu({
                 </button>
               </li>
               <li><Link href="/todo" onClick={cerrar} className="menu-item">Ver todo</Link></li>
+              <li><Link href="/outfits" onClick={cerrar} className="menu-item">Outfits</Link></li>
               {categorias.map((c) => (
                 <li key={c}>
                   <Link href={`/c/${slugCategoria(c)}`} onClick={cerrar} className="menu-item">

@@ -34,3 +34,10 @@ export const IconoCamara = () => (
     <path d="M13 5h.01" />
   </svg>
 );
+/** Bolsa de compras */
+export const IconoBolsa = () => (
+  <svg width="20" height="20" viewBox="0 0 20 20" {...base}>
+    <path d="M4 6.5h12l-1 11H5z" />
+    <path d="M7.5 6.5V5a2.5 2.5 0 0 1 5 0v1.5" />
+  </svg>
+);

@@ -3,6 +3,8 @@ import localFont from "next/font/local";
 import "./globals.css";
 import { ConfirmProvider } from "@/components/Confirm";
 import Radio from "@/components/Radio";
+import { BolsaProvider } from "@/components/Bolsa";
+import { numeroWhatsApp } from "@/lib/tienda";
 
 const zodiak = localFont({
   src: "../../public/fonts/Zodiak-Variable.woff2",
@@ -65,7 +67,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="es" className={`${zodiak.variable} ${plexMono.variable} ${pixel.variable}`}>
       <body>
-        <ConfirmProvider>{children}</ConfirmProvider>
+        <ConfirmProvider>
+          <BolsaProvider numero={numeroWhatsApp()}>{children}</BolsaProvider>
+        </ConfirmProvider>
         {radio && <Radio url={radio.url} nombre={radio.nombre} />}
       </body>
     </html>

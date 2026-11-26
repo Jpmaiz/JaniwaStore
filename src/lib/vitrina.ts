@@ -29,3 +29,18 @@ export function enlaceWhatsApp(numero: string, p: ProductoPublico, talla: string
 export function enlaceWhatsAppGeneral(numero: string): string {
   return `https://wa.me/${numero}?text=${encodeURIComponent("Hola Janiwa, quiero consultar por un producto.")}`;
 }
+
+export type ItemBolsa = { id: number; name: string; color: string | null; tallas: string[]; precio: number; foto: string | null };
+
+/** Mensaje de WhatsApp con todas las prendas de la bolsa */
+export function enlaceWhatsAppBolsa(numero: string, items: ItemBolsa[], origen: string): string {
+  const lineas = items.map((p, i) => {
+    const datos = [codigo(p.id), p.name, p.color, p.tallas.length ? `Talla ${p.tallas.join("/")}` : null].filter(Boolean).join(" · ");
+    return `${i + 1}. ${datos} · Bs ${money(p.precio)}\n   ${origen}/producto/${p.id}`;
+  });
+  const total = items.reduce((s, p) => s + p.precio, 0);
+  const texto =
+    `Hola Janiwa, quiero ${items.length === 1 ? "esta prenda" : `estas ${items.length} prendas`}:\n\n` +
+    `${lineas.join("\n")}\n\nTotal: Bs ${money(total)}`;
+  return `https://wa.me/${numero}?text=${encodeURIComponent(texto)}`;
+}
