@@ -7,6 +7,7 @@ import { enlacesBusqueda } from "@/lib/tiendas";
 import { cambiarCategoria, cambiarImagenProducto, revisarPrecios } from "@/app/actions";
 import { CATEGORIES } from "@/lib/types";
 import ImagePicker from "./ImagePicker";
+import VentaPanel from "./VentaPanel";
 import { useConfirm } from "./Confirm";
 import Row from "./Row";
 import Dialog, { CloseButton } from "./Dialog";
@@ -139,6 +140,8 @@ export default function ProductSheet({
             <p key={l} className="notice">{l}</p>
           ))}
         </div>
+
+        <VentaPanel key={product.id} product={product} costoBs={c?.totalBs ?? null} />
 
         <AddOffer product={product} onDone={() => setRevision(null)} />
 

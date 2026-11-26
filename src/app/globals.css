@@ -429,3 +429,94 @@ a.nav-item { color: var(--muted); text-decoration: none; }
   .lockup-grande img { height: 88px; }
   .lockup-grande .lockup-name { font-size: 46px; }
 }
+
+/* ══ Panel: sección Venta de la ficha ══ */
+.venta { display: flex; flex-direction: column; gap: 14px; padding: 18px; border: 1px solid var(--line-strong); background: var(--panel); }
+.venta-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 10px; }
+.venta h4 { font-family: var(--serif); font-weight: 700; font-size: 22px; margin: 0; }
+.switch { display: inline-flex; align-items: center; gap: 10px; min-height: 44px; }
+.switch input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.switch-ui { position: relative; width: 40px; height: 22px; border: 1px solid var(--line-strong); background: var(--bg); transition: background .2s, border-color .2s; flex: none; }
+.switch-ui::after { content: ""; position: absolute; top: 3px; left: 3px; width: 14px; height: 14px; background: var(--muted); transition: transform .2s, background .2s; }
+.switch input:checked + .switch-ui { background: var(--accent); border-color: var(--accent); }
+.switch input:checked + .switch-ui::after { transform: translateX(18px); background: var(--bg); }
+.switch input:focus-visible + .switch-ui { outline: 1px solid var(--accent); outline-offset: 3px; }
+.tile-live { position: absolute; top: 34px; left: 10px; font-size: 10px; letter-spacing: 0.1em; padding: 2px 5px; background: var(--bg); color: var(--accent); }
+
+/* ══ Tienda pública ══ */
+.shop { max-width: 1240px; margin: 0 auto; padding: 0 24px 40px; }
+.shop-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 16px; padding: 22px 0; border-bottom: 1px solid var(--line); }
+.shop-brand { color: var(--cream); text-decoration: none; }
+.shop-brand .lockup img { height: 56px; }
+.shop-brand .lockup-name { font-size: 30px; }
+.shop-brand .lockup-sub { font-size: 9px; padding-top: 5px; }
+.shop-nav { display: flex; align-items: center; gap: 18px; font-size: 11px; letter-spacing: 0.1em; }
+.shop-nav a { color: var(--cream); text-decoration: none; min-height: 44px; display: inline-flex; align-items: center; }
+.shop-nav a:not(.btn):hover { color: var(--accent); }
+.shop-nav .btn { padding: 0 16px; }
+
+.shop-hero { padding: 56px 0 36px; display: flex; flex-direction: column; gap: 14px; max-width: 920px; animation: cfRise .6s cubic-bezier(.2,.7,.2,1) both; }
+.shop-hero h1 { font-size: clamp(40px, 7vw, 76px); line-height: 0.95; letter-spacing: -0.02em; }
+.shop-lead { font-size: 14px; color: var(--muted); line-height: 1.6; max-width: 520px; }
+
+.shop-cats { display: flex; gap: 8px; overflow-x: auto; padding: 4px 0 22px; scrollbar-width: none; }
+.shop-cats::-webkit-scrollbar { display: none; }
+.shop-cats .chip { background: none; flex: none; cursor: pointer; }
+.shop-cats .chip[aria-pressed="true"] { background: var(--cream); color: var(--bg); border-color: var(--cream); }
+
+.shop-grid { columns: 260px; column-gap: 20px; }
+.shop-card {
+  display: block; width: 100%; margin: 0 0 26px; break-inside: avoid; color: var(--cream); text-align: left;
+  animation: cfRise .5s cubic-bezier(.2,.7,.2,1) both;
+}
+.shop-img { position: relative; display: block; overflow: hidden; background-color: var(--panel); }
+.shop-img img { display: block; width: 100%; height: auto; transition: transform .6s cubic-bezier(.2,.7,.2,1); }
+.shop-card:hover .shop-img img, .shop-card:focus-visible .shop-img img { transform: scale(1.03); }
+.shop-card:focus-visible { outline: 1px solid var(--accent); outline-offset: 4px; }
+.shop-badge { position: absolute; top: 10px; left: 10px; padding: 3px 7px; font-size: 10px; letter-spacing: 0.1em; background: var(--bg); color: var(--cream); }
+.shop-badge.is-stock { background: var(--accent); color: var(--bg); font-weight: 600; }
+.shop-info { display: flex; flex-direction: column; gap: 4px; padding-top: 12px; }
+.shop-name { font-family: var(--serif); font-weight: 700; font-size: 19px; line-height: 1.15; }
+.shop-price { font-size: 13px; font-weight: 600; letter-spacing: 0.04em; margin-top: 2px; }
+
+.shop-how { margin-top: 48px; padding: 40px 0; border-top: 1px solid var(--line); display: flex; flex-direction: column; gap: 24px; }
+.shop-how h2 { font-size: 40px; }
+.shop-how ol { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
+.shop-how li { display: flex; flex-direction: column; gap: 8px; border-top: 1px solid var(--line-strong); padding-top: 14px; font-size: 12px; line-height: 1.6; }
+.how-n { font-size: 11px; color: var(--accent); letter-spacing: 0.1em; }
+.how-t { font-family: var(--serif); font-weight: 700; font-size: 24px; }
+.shop-foot { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; padding: 24px 0 8px; border-top: 1px solid var(--line); font-size: 10px; letter-spacing: 0.14em; color: var(--muted); }
+.shop-foot a { color: var(--cream); }
+
+/* ficha del cliente */
+.tallas { border: 0; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+.tallas legend { padding: 0; margin-bottom: 10px; }
+.tallas-lista { display: flex; flex-wrap: wrap; gap: 8px; }
+.talla { min-width: 48px; min-height: 44px; padding: 0 12px; border: 1px solid var(--line-strong); font-size: 12px; text-align: center; }
+.talla:hover { border-color: var(--cream); }
+.talla[aria-pressed="true"] { background: var(--cream); color: var(--bg); border-color: var(--cream); font-weight: 600; }
+.desc { font-size: 13px; line-height: 1.7; color: var(--cream); white-space: pre-line; }
+.total { flex-wrap: wrap; }
+.total-num { white-space: nowrap; }
+.btn { text-align: center; }
+.btn-wa { display: flex; align-items: center; justify-content: center; text-align: center; text-decoration: none; min-height: 52px; }
+.sheet-page { position: static; max-width: 1000px; max-height: none; margin: 32px auto 0; animation: cfRise .5s cubic-bezier(.2,.7,.2,1) both; }
+
+@media (max-width: 640px) {
+  .shop { padding: 0 16px 32px; }
+  .shop-head { padding: 16px 0; }
+  .shop-brand .lockup img { height: 46px; }
+  .shop-brand .lockup-name { font-size: 26px; }
+  .shop-nav a:not(.btn) { display: none; }
+  .shop-hero { padding: 32px 0 24px; }
+  .shop-grid { columns: 2; column-gap: 12px; }
+  .shop-card { margin-bottom: 20px; }
+  .shop-name { font-size: 16px; }
+  .shop-how ol { grid-template-columns: 1fr; }
+  .shop-how h2 { font-size: 32px; }
+  .sheet-page { margin-top: 16px; }
+  .sheet-body { padding: 22px 18px 24px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .shop-hero, .shop-card, .sheet-page { animation: none; }
+}

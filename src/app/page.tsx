@@ -1,15 +1,16 @@
-import Marca from "@/components/Marca";
+import type { Metadata } from "next";
+import { cargarVitrina, numeroWhatsApp } from "@/lib/tienda";
+import Tienda from "@/components/Tienda";
 
-/** Portada provisoria: aquí irá la tienda pública (Fase 3) */
-export default function Inicio() {
-  return (
-    <main className="auth-shell">
-      <div className="portada">
-        <Marca subtitulo="PRODUCTOS DE EE. UU. EN BOLIVIA" grande />
-        <div className="cf-rule" aria-hidden="true" style={{ width: "100%" }} />
-        <p className="portada-texto">La tienda abre muy pronto.</p>
-        <p className="small muted">COCHABAMBA · BOLIVIA</p>
-      </div>
-    </main>
-  );
+// La tienda se actualiza sola cuando guardas cambios en el panel; además se refresca cada minuto
+export const revalidate = 60;
+
+export const metadata: Metadata = {
+  title: "Janiwa · Productos de EE. UU. en Bolivia",
+  description: "Productos de EE. UU. por encargo en Cochabamba. Elige y coordina por WhatsApp.",
+};
+
+export default async function Inicio() {
+  const { productos, error } = await cargarVitrina();
+  return <Tienda productos={productos} numero={numeroWhatsApp()} error={error} />;
 }

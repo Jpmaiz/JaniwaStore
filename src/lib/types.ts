@@ -49,6 +49,31 @@ export type Product = {
   destino: "venta" | "personal";
   notes: string | null;
   offers: Offer[];
+  /* Venta (tienda pública) */
+  publicado: boolean;
+  precio_venta_bs: number | null;
+  precio_minimo_bs: number | null;
+  tallas: string[];
+  disponibilidad: Disponibilidad;
+  llegada_estimada: string | null;
+  descripcion: string | null;
+  interes: number;
+};
+
+export type Disponibilidad = "stock" | "encargo";
+
+/** Lo ÚNICO que ve un cliente: nada de costos, tiendas de origen ni márgenes */
+export type ProductoPublico = {
+  id: number;
+  name: string;
+  color: string | null;
+  category: string;
+  image_url: string | null;
+  precio_venta_bs: number;
+  tallas: string[];
+  disponibilidad: Disponibilidad;
+  llegada_estimada: string | null;
+  descripcion: string | null;
 };
 
 export type Settings = {

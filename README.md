@@ -37,6 +37,8 @@ calculadora de costo **en tus manos en USA** y conversión a **Bs al dólar para
    - `supabase/002_ofertas.sql` (ofertas por tienda y color)
    - `supabase/003_tiendas.sql` (apartado de tiendas)
    - `supabase/005_monedas.sql` (precios en $, Bs o €)
+   - `supabase/006_venta.sql` (datos de venta y tienda pública)
+   - o todo junto: `supabase/instalar_todo.sql`
 4. **Variables de entorno**: copia `.env.example` como `.env.local` y llena:
    - `SUPABASE_URL` → Project Settings › Data API (solo hasta `.supabase.co`)
    - `SUPABASE_SERVICE_ROLE_KEY` → Project Settings › API Keys › clave **secret** (o `service_role`)
@@ -46,14 +48,16 @@ calculadora de costo **en tus manos en USA** y conversión a **Bs al dólar para
    - Authentication › Users › *Add user* › *Create new user* (tu correo + contraseña, marca *Auto Confirm*)
    - Authentication › Sign In / Providers › desactiva *Allow new users to sign up*
 6. **Corre la app**: `npm run dev`
-   - Tienda (por ahora portada): http://localhost:3000
+   - Tienda pública: http://localhost:3000 (muestra solo lo marcado como *Publicado*)
    - Panel: http://localhost:3000/admin (te pide iniciar sesión)
 
 ## Estructura
 ```
 src/
   app/
-    page.tsx          portada pública (la tienda irá aquí)
+    page.tsx          tienda pública (catálogo)
+    producto/[id]/    página de cada producto (link para compartir)
+    public-actions.ts contador «Lo quiero» (sin datos del visitante)
     login/            inicio de sesión del admin
     admin/page.tsx    wishlist (protegido)
     admin/tiendas/    apartado de tiendas (protegido)
@@ -65,6 +69,8 @@ src/
   components/         Sidebar, Tile, ProductSheet, formularios, Dialog
   lib/
     auth.ts           sesión del admin y requireAdmin()
+    tienda.ts         datos de la tienda: SOLO columnas públicas
+    vitrina.ts        textos y link de WhatsApp
     datos.ts          carga de productos, ofertas, ajustes y tiendas
     calc.ts           fórmula de costo y mejor oferta
     scraper.ts        lector de links (JSON-LD y Open Graph)
@@ -96,6 +102,12 @@ colchón   = subtotal × colchón%
 total USD = subtotal + colchón
 total Bs  = total USD × dólar paralelo
 ```
+
+## Tienda pública
+- En la ficha de cada producto del panel, sección **Venta**: precio en Bs, precio mínimo, tallas,
+  en stock / por encargo (con fecha estimada), descripción y casilla **Publicado**.
+- La tienda muestra solo lo publicado y nunca costos, ofertas, tiendas de origen ni precio mínimo.
+- «Lo quiero» abre WhatsApp (`WHATSAPP_NUMERO`) con el código, modelo, color, talla, precio y link.
 
 ## Seguridad
 - El panel vive en `/admin`: el proxy (`src/proxy.ts`) manda al login si no hay sesión,

@@ -65,6 +65,7 @@ export default function Tile({
           </div>
         )}
         <span className="tile-code">{codigo(product.id)}</span>
+        {product.publicado && <span className="tile-live" title="Publicado en la tienda">● EN TIENDA</span>}
         {estado !== "EN STOCK" && <span className={`badge badge-${estado.replace(" ", "-")}`}>{estado}</span>}
         {resumen.tiendas > 1 && <span className="tile-stores">{resumen.tiendas} TIENDAS</span>}
         <span className="cap">

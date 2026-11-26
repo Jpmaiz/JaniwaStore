@@ -17,6 +17,7 @@ export async function cargarDatos(): Promise<Datos> {
         .from("products")
         .select(
           "id, created_at, name, color, category, image_url, destino, notes, " +
+            "publicado, precio_venta_bs, precio_minimo_bs, tallas, disponibilidad, llegada_estimada, descripcion, interes, " +
             "offers (id, product_id, created_at, url, store, price_usd, shipping_usd, currency, status, image_url, checked_at, check_error)",
         )
         .order("created_at", { ascending: false }),
@@ -24,13 +25,24 @@ export async function cargarDatos(): Promise<Datos> {
     ]);
     if (prods.error) {
       const m = prods.error.message;
-      const sql = /currency/i.test(m) ? "005_monedas.sql" : /offers|color/i.test(m) ? "002_ofertas.sql" : null;
+      const sql = /publicado|precio_venta|tallas|disponibilidad|interes/i.test(m)
+        ? "006_venta.sql"
+        : /currency/i.test(m)
+          ? "005_monedas.sql"
+          : /offers|color/i.test(m)
+            ? "002_ofertas.sql"
+            : null;
       throw new Error(sql ? `${m} — ¿corriste supabase/${sql}?` : m);
     }
 
     // Postgres devuelve "numeric" como texto: lo convertimos a número
     const products = ((prods.data ?? []) as unknown as Product[]).map((p) => ({
       ...p,
+      precio_venta_bs: n(p.precio_venta_bs),
+      precio_minimo_bs: n(p.precio_minimo_bs),
+      tallas: p.tallas ?? [],
+      disponibilidad: p.disponibilidad ?? "encargo",
+      interes: Number(p.interes ?? 0),
       offers: (p.offers ?? []).map(
         (o): Offer => ({
           ...o,

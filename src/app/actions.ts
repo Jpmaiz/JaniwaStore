@@ -66,6 +66,9 @@ function limpiarOferta(o: OfertaInput) {
 function refrescar() {
   revalidatePath("/admin");
   revalidatePath("/admin/tiendas");
+  // la tienda pública también muestra fotos y nombres
+  revalidatePath("/");
+  revalidatePath("/producto/[id]", "page");
 }
 
 /* ── Lectura de links ── */
@@ -282,6 +285,46 @@ export async function eliminarTienda(id: number): Promise<ActionResult> {
   const { error } = await db().from("stores").delete().eq("id", id);
   if (error) return { ok: false, error: error.message };
   revalidatePath("/admin/tiendas");
+  return { ok: true };
+}
+
+/* ── Venta (tienda pública) ── */
+
+export type DatosVenta = {
+  publicado: boolean;
+  precio_venta_bs: number | null;
+  precio_minimo_bs: number | null;
+  tallas: string[];
+  disponibilidad: "stock" | "encargo";
+  llegada_estimada: string | null;
+  descripcion: string | null;
+};
+
+export async function guardarVenta(id: number, d: DatosVenta): Promise<ActionResult> {
+  await requireAdmin();
+  const precio = num(d.precio_venta_bs);
+  const minimo = num(d.precio_minimo_bs);
+  if (d.publicado && !precio) return { ok: false, error: "Para publicarlo, ponle un precio de venta." };
+  if (precio && minimo && minimo > precio) return { ok: false, error: "El precio mínimo no puede ser mayor al de venta." };
+  const fecha = typeof d.llegada_estimada === "string" && /^\d{4}-\d{2}-\d{2}$/.test(d.llegada_estimada) ? d.llegada_estimada : null;
+  const tallas = Array.from(
+    new Set((d.tallas ?? []).map((t) => txt(t, 12)?.toUpperCase()).filter((t): t is string => !!t)),
+  ).slice(0, 30);
+
+  const { error } = await db()
+    .from("products")
+    .update({
+      publicado: !!d.publicado,
+      precio_venta_bs: precio,
+      precio_minimo_bs: minimo,
+      tallas,
+      disponibilidad: d.disponibilidad === "stock" ? "stock" : "encargo",
+      llegada_estimada: d.disponibilidad === "stock" ? null : fecha,
+      descripcion: txt(d.descripcion, 1500),
+    })
+    .eq("id", id);
+  if (error) return { ok: false, error: error.message };
+  refrescar();
   return { ok: true };
 }
 
