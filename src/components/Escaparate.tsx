@@ -11,6 +11,9 @@ import Marco from "./Marco";
 import Dialog, { CloseButton } from "./Dialog";
 import FichaPublica from "./FichaPublica";
 
+/** Formas variadas para que la grilla quede "desordenada" como Pinterest (fijas por prenda) */
+const FORMAS = ["3 / 4", "4 / 5", "2 / 3", "1 / 1", "3 / 4", "4 / 5", "9 / 14"];
+
 type Chip = { href: string; texto: string; activo: boolean };
 
 /** Título y accesos rápidos (chips) de cada página */
@@ -71,6 +74,17 @@ export default function Escaparate({
   const lista = filtrar(productos, vista);
   const { kicker, titulo, chips } = encabezado(vista, productos);
   const actual = productos.find((p) => p.id === abierto) ?? null;
+  // En el celular (sin cursor) el primer toque levanta el nombre; el segundo abre la prenda
+  const [elegido, setElegido] = useState<number | null>(null);
+  const tocar = (e: React.MouseEvent, id: number) => {
+    const sinCursor = window.matchMedia("(hover: none)").matches;
+    if (sinCursor && e.detail !== 0 && elegido !== id) {
+      setElegido(id);
+      return;
+    }
+    setElegido(null);
+    abrir(id);
+  };
 
   // La ficha abierta queda en la dirección (?p=7): el botón "atrás" del celular la cierra
   useEffect(() => {
@@ -130,31 +144,24 @@ export default function Escaparate({
             <button
               key={p.id}
               type="button"
-              className="shop-card"
+              className={`shop-card${elegido === p.id ? " is-elegido" : ""}`}
               style={{ animationDelay: `${Math.min(i, 12) * 40}ms` }}
-              onClick={() => abrir(p.id)}
-              aria-label={`${p.name}${p.color ? ", " + p.color : ""}, Bs ${money(p.precio_venta_bs)}`}
+              onClick={(e) => tocar(e, p.id)}
+              onBlur={() => setElegido((x) => (x === p.id ? null : x))}
+              aria-label={`${p.name}${p.color ? ", " + p.color : ""}, ${etiquetaTalla(p).toLowerCase()}, Bs ${money(p.precio_venta_bs)}`}
             >
-              <span className="shop-img tex">
+              <span className="shop-img" style={{ aspectRatio: FORMAS[p.id % FORMAS.length] }}>
                 {p.image_url ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img src={p.image_url} alt="" loading={i < 4 ? "eager" : "lazy"} />
                 ) : (
-                  <span className="placeholder" style={{ height: 240 }}>
-                    [ SIN IMAGEN ]
-                  </span>
+                  <span className="placeholder">[ SIN IMAGEN ]</span>
                 )}
-                {p.fotos[1] && (
-                  // segunda foto al pasar el cursor, como en las tiendas de ropa
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img className="shop-img-2" src={p.fotos[1]} alt="" loading="lazy" />
-                )}
-                <span className="shop-badge is-stock">{etiquetaTalla(p)}</span>
-              </span>
-              <span className="shop-info">
-                <span className="shop-name">{p.name}</span>
-                {p.color && <span className="shop-color">{p.color}</span>}
-                <span className="shop-price">Bs {money(p.precio_venta_bs)}</span>
+                <span className="shop-cap" aria-hidden="true">
+                  <span className="shop-name">{p.name}</span>
+                  <span className="shop-color">{[p.color, etiquetaTalla(p)].filter(Boolean).join(" · ")}</span>
+                  <span className="shop-price">Bs {money(p.precio_venta_bs)}</span>
+                </span>
               </span>
             </button>
           ))}
