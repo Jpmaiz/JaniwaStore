@@ -3,8 +3,7 @@
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 
-const HUIDA_MS = 5000; // computadora: tiempo que se escapa antes de dejarse atrapar
-const SALTOS_MOVIL = 3; // celular: saltos antes de funcionar como link
+const ESCAPADAS = 3; // en PC y celular: se escapa 3 veces y a la tercera se rinde
 const BORDE = 56; // espacio libre a cada lado (menú y WhatsApp no se tapan)
 
 type Pos = { x: number; y: number; r: number };
@@ -18,7 +17,6 @@ export default function LogoEscurridizo() {
   const ref = useRef<HTMLAnchorElement>(null);
   const [pos, setPos] = useState<Pos>(CASA);
   const [globo, setGlobo] = useState<string | null>(null);
-  const inicio = useRef<number | null>(null);
   const saltos = useRef(0);
   const rendido = useRef(false);
   const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
@@ -49,23 +47,33 @@ export default function LogoEscurridizo() {
   }, []);
 
   const reiniciar = () => {
-    inicio.current = null;
     saltos.current = 0;
     rendido.current = false;
+  };
+
+  /** Una escapada más; a la tercera se queda quieto y se deja atrapar */
+  const escapar = (frase: string) => {
+    saltos.current += 1;
+    saltar();
+    if (saltos.current >= ESCAPADAS) {
+      rendido.current = true;
+      decir(frase);
+    }
   };
 
   // Computadora: se escapa cuando llega el cursor
   const alAcercarse = (e: React.PointerEvent) => {
     if (e.pointerType !== "mouse" || sinJuego() || rendido.current) return;
-    if (inicio.current === null) {
-      inicio.current = Date.now();
-      esperar(HUIDA_MS, () => {
-        rendido.current = true;
-        setPos(CASA);
-        decir("ya, me rindo");
-      });
-    }
-    saltar();
+    escapar("ya, me rindo");
+  };
+
+  // Cuando el cursor se va después de rendirse, vuelve a su lugar y el juego empieza de nuevo
+  const alAlejarse = (e: React.PointerEvent) => {
+    if (e.pointerType !== "mouse" || !rendido.current) return;
+    esperar(1400, () => {
+      setPos(CASA);
+      reiniciar();
+    });
   };
 
   const alTocar = (e: React.MouseEvent) => {
@@ -73,12 +81,10 @@ export default function LogoEscurridizo() {
     const tactil = window.matchMedia("(hover: none)").matches;
 
     if (tactil) {
-      // Celular: salta hasta 3 veces
-      if (saltos.current < SALTOS_MOVIL) {
+      // Celular: salta 3 veces; el cuarto toque ya entra
+      if (!rendido.current) {
         e.preventDefault();
-        saltos.current += 1;
-        saltar();
-        if (saltos.current === SALTOS_MOVIL) decir("ok, ahora sí");
+        escapar("ok, ahora sí");
         return;
       }
       setPos(CASA);
@@ -86,10 +92,10 @@ export default function LogoEscurridizo() {
       return;
     }
 
-    // Computadora: no se deja hacer clic mientras se escapa
-    if (inicio.current !== null && !rendido.current) {
+    // Computadora: no se deja hacer clic hasta rendirse
+    if (!rendido.current) {
       e.preventDefault();
-      saltar();
+      escapar("ya, me rindo");
       return;
     }
     reiniciar();
@@ -102,6 +108,7 @@ export default function LogoEscurridizo() {
       className="bar-logo"
       aria-label="Janiwa, inicio"
       onPointerEnter={alAcercarse}
+      onPointerLeave={alAlejarse}
       onClick={alTocar}
       style={{ transform: `translate(${pos.x}px, ${pos.y}px) rotate(${pos.r}deg)` }}
     >
