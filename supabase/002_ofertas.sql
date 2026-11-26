@@ -1,4 +1,4 @@
--- Napoleon · migración 002: color por tarjeta + ofertas de varias tiendas
+-- Janiwa · migración 002: color por tarjeta + ofertas de varias tiendas
 -- Ejecútalo UNA vez en Supabase > SQL Editor > New query > Run
 -- (si ya lo corriste, volver a correrlo no duplica nada)
 

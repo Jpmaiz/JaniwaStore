@@ -1,4 +1,4 @@
-# Napoleon
+# Janiwa
 
 Wishlist personal para compras en USA (Amazon, StockX, Urban Outfitters, Adidas…) con
 calculadora de costo **en tus manos en USA** y conversión a **Bs al dólar paralelo** del día.
@@ -55,7 +55,7 @@ src/
     icon.png          ícono de la pestaña
     actions.ts        agregar / cambiar estado / eliminar / guardar ajustes
     layout.tsx        fuentes Zodiak + IBM Plex Mono
-    globals.css       estilo Napoleon (chocolate, cursores, grilla)
+    globals.css       estilo Janiwa (chocolate, cursores, grilla)
   components/         Sidebar, Tile, ProductSheet, formularios, Dialog
   lib/
     datos.ts          carga de productos, ofertas, ajustes y tiendas

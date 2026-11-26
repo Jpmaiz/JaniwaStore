@@ -116,7 +116,7 @@ export function precio(m: Moneda | null | undefined, n: number | null | undefine
 }
 
 export function codigo(id: number): string {
-  return "NP-" + String(id).padStart(3, "0");
+  return "JW-" + String(id).padStart(3, "0");
 }
 
 export function fechaCorta(iso: string | null): string {

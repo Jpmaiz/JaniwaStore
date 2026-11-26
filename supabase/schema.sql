@@ -1,4 +1,4 @@
--- Napoleon · esquema inicial (Wishlist)
+-- Janiwa · esquema inicial (Wishlist)
 -- Ejecuta este archivo en Supabase > SQL Editor > New query > Run
 
 -- Configuración global (una sola fila)

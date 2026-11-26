@@ -1,4 +1,4 @@
--- Napoleon · migración 005: precios en dólares, bolivianos o euros
+-- Janiwa · migración 005: precios en dólares, bolivianos o euros
 -- Ejecútalo UNA vez en Supabase > SQL Editor > New query > Run
 
 -- Moneda de cada oferta. El precio y el envío de la oferta están en ESTA moneda

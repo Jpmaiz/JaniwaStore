@@ -4,7 +4,7 @@ import { obtenerDolar } from "@/lib/dolar";
 import Stores from "@/components/Stores";
 
 export const dynamic = "force-dynamic";
-export const metadata: Metadata = { title: "Tiendas · Nerdie" };
+export const metadata: Metadata = { title: "Tiendas · Janiwa" };
 
 export default async function TiendasPage() {
   const [datos, dolar] = await Promise.all([cargarDatos(), obtenerDolar()]);

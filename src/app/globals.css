@@ -203,7 +203,7 @@ p { margin: 0; }
 .chip:hover { background: var(--cream); color: var(--bg); }
 
 /* ── Logo y navegación ── */
-/* Logo + nombre: El pensador mira hacia "Nerdie" y su base se alinea con la línea inferior */
+/* Logo + nombre: El pensador mira hacia "Janiwa" y su base se alinea con la línea inferior */
 .lockup { display: flex; align-items: flex-end; gap: 10px; width: fit-content; color: var(--cream); text-decoration: none; }
 .lockup img {
   display: block; height: 72px; width: auto; flex: none;
@@ -211,7 +211,7 @@ p { margin: 0; }
 }
 .lockup:hover img { transform: rotate(-3deg); }
 .lockup-text { display: flex; flex-direction: column; gap: 9px; padding-bottom: 2px; }
-.lockup-name { font-family: var(--serif); font-weight: 700; font-size: 40px; line-height: 0.78; letter-spacing: -0.02em; margin: 0; }
+.lockup-name { font-family: var(--serif); font-weight: 700; font-size: 37px; line-height: 0.78; letter-spacing: -0.02em; margin: 0; }
 .lockup-sub {
   font-size: 10px; letter-spacing: 0.18em; color: var(--muted);
   border-top: 1px solid var(--line-strong); padding-top: 7px;

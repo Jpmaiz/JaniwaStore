@@ -26,11 +26,11 @@ export default function Sidebar({
   const cats = ["TODO", ...CATEGORIES.filter((c) => (conteo?.[c] ?? 0) > 0 || c === categoria)];
   return (
     <aside className="sidebar">
-      <Link href="/" className="lockup" aria-label="Nerdie, ir al inicio">
+      <Link href="/" className="lockup" aria-label="Janiwa, ir al inicio">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src="/logo.png" alt="" />
         <span className="lockup-text">
-          <h1 className="lockup-name">Nerdie</h1>
+          <h1 className="lockup-name">Janiwa</h1>
           <span className="lockup-sub">COMPRA / VENTA</span>
         </span>
       </Link>

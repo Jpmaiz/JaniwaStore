@@ -1,4 +1,4 @@
--- Napoleon · migración 003: tiendas que visitas y lo que te interesa de cada una
+-- Janiwa · migración 003: tiendas que visitas y lo que te interesa de cada una
 -- Ejecútalo UNA vez en Supabase > SQL Editor > New query > Run
 
 create table if not exists stores (

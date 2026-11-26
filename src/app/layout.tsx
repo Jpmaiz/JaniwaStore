@@ -28,7 +28,7 @@ const pixel = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "Nerdie",
+  title: "Janiwa",
   description: "Wishlist y calculadora de compras USA → Bolivia",
 };
 
